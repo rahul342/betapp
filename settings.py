@@ -60,7 +60,6 @@ TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
 ROOT_URLCONF = 'urls'
 
 #FACEBOOK_APP_ID = '320247024695942'
-#FACEBOOK_APP_SECRET = 'd8a51eed030d8c7d8dd00b5c1e23c18c'
 #FACEBOOK_CANVAS_PAGE = 'https://apps.facebook.com/cricbets/'
 #FACEBOOK_STORE_LIKES = False
 #FACEBOOK_STORE_FRIENDS = False
