@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '320247024695942', // App ID
+      channelUrl : 'https://www.iplbetter.appspot.com/channel', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+    });
+    
+    var uid, access_token;
+
+    // Additional initialization code here
+    FB.getLoginStatus(function(response) {
+	  if (response.status === 'connected') {
+	    // the user is logged in and has authenticated your
+	    // app, and response.authResponse supplies
+	    // the user's ID, a valid access token, a signed
+	    // request, and the time the access token 
+	    // and signed request each expire
+	    loggedIn(response);
+	  } else {
+	    FB.login(function(response) {
+		   if (response.authResponse) {
+		     	loggedIn(response);
+		   } else {
+		     console.log('User cancelled login or did not fully authorize.');
+		   }
+		 });
+	  }
+	  
+	  function loggedIn(response) {
+	  	uid = response.authResponse.userID;
+	    access_token= response.authResponse.accessToken;
+	    FB.api('/me', function(response) {
+	    	  alert(response);
+		      $("#betting_root").html("Hi " + response.name);
+		      $("#profile_pic").prepend('<img id="theImg" src="https://graph.facebook.com/'+response.username+'/picture" />');
+		 });
+	  }
+	  
+	 });
+ };
+ 
+  
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+</script>
+
+<div id="betting_root"></div>
+<div id="profile_pic"></div>
+</body>
+</html>
