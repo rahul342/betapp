@@ -7,44 +7,31 @@
 <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '320247024695942', // App ID
-      channelUrl : 'https://www.iplbetter.appspot.com/channel', // Channel File
+      appId      : '{{app_id}}', // App ID
+      channelUrl : 'https://iplbetter.appspot.com/channel', // Channel File
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
     });
     
     var uid, access_token;
-
-    // Additional initialization code here
+    
     FB.getLoginStatus(function(response) {
-	  if (response.status === 'connected') {
-	    // the user is logged in and has authenticated your
-	    // app, and response.authResponse supplies
-	    // the user's ID, a valid access token, a signed
-	    // request, and the time the access token 
-	    // and signed request each expire
-	    loggedIn(response);
+  		if (response.status === 'connected') {
+		    loggedIn(response);
 	  } else {
-	    FB.login(function(response) {
-		   if (response.authResponse) {
-		     	loggedIn(response);
-		   } else {
-		     console.log('User cancelled login or did not fully authorize.');
-		   }
-		 });
+			top.location = encodeURI("https://www.facebook.com/dialog/oauth?client_id={{app_id}}&redirect_uri={{app_uri}}&response_type=token");
 	  }
+	});
 	  
-	  function loggedIn(response) {
-	  	uid = response.authResponse.userID;
+	function loggedIn(response) {
+	 	var uid = response.authResponse.userID;
 	    access_token= response.authResponse.accessToken;
 	    FB.api('/me', function(response) {
-	    	  alert(response);
-		      $("#betting_root").html("Hi " + response.name);
+	    	  alert(JSON.stringify(response));
+		      $("#betting_root").html("Hi " + response.name + " " + String(access_token));
 		      $("#profile_pic").prepend('<img id="theImg" src="https://graph.facebook.com/'+response.username+'/picture" />');
 		 });
-	  }
-	  
-	 });
+	}
  };
  
   

@@ -13,14 +13,12 @@ AUTOLOAD_SITECONF = 'indexes'
 SECRET_KEY = '=r-$b*8hglm+858&9t043hlm6-&6-3d3vfc4((7yd0dbrakhvi'
 
 INSTALLED_APPS = (
-#    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.auth',
     'django.contrib.sessions',
     'djangotoolbox',
     'autoload',
     'dbindexer',
-#    'django_facebook',
     'django.contrib.staticfiles',
 
     # djangoappengine should come last, so it can override a few manage.py commands
@@ -45,7 +43,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'django.core.context_processors.media',
-#    'django_facebook.context_processors.facebook',
 )
 
 # This test runner captures stdout and associates tracebacks with their
@@ -56,12 +53,10 @@ STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static_files')
 STATIC_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
-
 ROOT_URLCONF = 'urls'
 
-#FACEBOOK_APP_ID = '320247024695942'
-#FACEBOOK_CANVAS_PAGE = 'https://apps.facebook.com/cricbets/'
-#FACEBOOK_STORE_LIKES = False
-#FACEBOOK_STORE_FRIENDS = False
-#AUTH_PROFILE_MODULE = 'player.UserProfile'
-#FACEBOOK_DEFAULT_SCOPE = ['user_location']
+FACEBOOK_APP_ID_MAIN = '320247024695942'
+FACEBOOK_APP_ID_LOCAL = '141889045936869'
+
+
+REFRESH_TIME = 10
