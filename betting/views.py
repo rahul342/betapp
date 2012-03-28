@@ -16,8 +16,29 @@ def start(request):
         app_uri = 'https://apps.facebook.com/cricbetslocal/'
     
     logger.info(app_id)
-    return render_to_response('fb_login.html', dict(app_id = app_id, app_uri=app_uri))
+    return render_to_response('user_bet_home.html', dict(app_id = app_id, app_uri=app_uri))
 
+def placebets(request):
+    if on_production_server:
+        app_id = settings.FACEBOOK_APP_ID_MAIN
+        app_uri = 'https://apps.facebook.com/cricbets/'
+    else:
+        app_id = settings.FACEBOOK_APP_ID_LOCAL
+        app_uri = 'https://apps.facebook.com/cricbetslocal/'
+    
+    logger.info(app_id)
+    return render_to_response('placebets.html', dict(app_id = app_id, app_uri=app_uri))
+
+def userhome(request):
+    if on_production_server:
+        app_id = settings.FACEBOOK_APP_ID_MAIN
+        app_uri = 'https://apps.facebook.com/cricbets/'
+    else:
+        app_id = settings.FACEBOOK_APP_ID_LOCAL
+        app_uri = 'https://apps.facebook.com/cricbetslocal/'
+    
+    logger.info(app_id)
+    return render_to_response('userhome.html', dict(app_id = app_id, app_uri=app_uri))
 
 def home(request):
     user, created = User.objects.get_or_create(fb_id = request.GET['fb_id'])
