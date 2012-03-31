@@ -14,6 +14,8 @@
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>	
 	<script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
+	<script type="text/javascript" src="http://baijs.nl/tinyscrollbar/js/jquery.tinyscrollbar.min.js"></script>
+	<script type="text/javascript" src="/static/js/bet.js"></script>
 	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -69,14 +71,14 @@
 	<div id="profile_pic"></div>	
 	<!-- User Home starts from here-->
 	<div style="width:758px;overflow:hidden; position:absolute; border: 1px solid #EEEEEE;">
-	
+		<!--tabs code-->
 		<ul class="nav nav-tabs" style='background-color:#EEEEEE; margin-bottom:0px;' >
 			<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
 			<li id="placebets"><a href="javascript:void(0);" onclick="ajax_post('placebets')">PlaceBets</a></li>
 			<li><a href="#">Invite Friends</a></li>
 			<li><a href="#">Add Cash</a></li>
 			<li><a href="#">Help</a></li>
-			<a style="float:right;"class="btn btn-success" href="#">Cash 200</a>			
+			<a id='user_cash' style="float:right;"class="btn btn-success" href="#">Cash 200</a>			
 		 </ul>	 
 	
 	<div id="bet_container" class="bet_container" style= "border: 1px solid #EEEEEE;background: url(http://taat.pl/grid/10x10_fff1d3d3.gif);">
@@ -295,61 +297,8 @@
 		</div>
 			
 	</div>
-
 	
-	<script>
-	function ajax_post(type) {
-		if(type == 'home') {
-			FB.Canvas.setAutoResize();
-			$("div#bet_container").html("");
-			$("div#bet_container").load('https://127.0.0.1:8001/userhome/', function(response, status, xhr) {
-			  if (status == "error") {
-				var msg = "Sorry but there was an error: ";
-				alert(msg + xhr.status + " " + xhr.statusText);
-			  }
-			  //alert('Load was performed.');
-			});
-			$("li").removeClass("active");	
-			$("#home").addClass("active");
-			
-		} else if(type == 'placebets') {
-			FB.Canvas.setAutoResize();
-			$("div#bet_container").html("");
-			$("div#bet_container").load('https://127.0.0.1:8001/placebets/', function(response, status, xhr) {
-			  if (status == "error") {
-				var msg = "Sorry but there was an error: ";
-				alert(msg + xhr.status + " " + xhr.statusText);
-			  }
-			  //alert('Load was performed.');
-			});
-			$("li").removeClass("active");	
-			$("#placebets").addClass("active");			
-			//alert('hi');
-		}
-	}
-		function appendBet(teamname, odds) {
-			alert('hello');
-			var betcontent="<div class='alert alert-success' style='padding-top:2px;font-size:11px;'>\
-								<a class='close'  data-dismiss='alert'>x</a>\
-								  <div style='float:left;' id='team_name'><h5>"+ teamname+"</h5> </div>\
-								  <div style='margin-left:87px;' id='odds'> "+odds+"</div>\
-								  <div id='stakeLabel' style='margin-right:5px;float:left;'>Stake</div>\
-								  <div style='float:left;'>	<input id='stake' name='stake' type='text' style='height:15px;width:30px;margin-top:-2px;'class='span1 stake'></div>\
-								  <div id='towinlabel' style='margin-left:17px;margin-right:10px;float:left;'> To Win  </div>\
-								  <div id='towin'>23</div>\
-							  </div>";		  
-		  $('#bet_slip_container').append(betcontent);
-		  $(".stake").keyup(function() {
-		    oddsVal = $($(this).parent().prev().prev()).text();
-			alert(parseInt(oddsVal));
-			$($($(this).parent().next().next())).text($(this).val() * parseFloat(oddsVal));			
-		  });
-		}
-		
-		function showMatch() {
-			$('div#match_winner').show();
-		}
-	</script>
+	
 	<!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster 
@@ -368,16 +317,4 @@
     <script src="/media/farmerbook/js/bootstrap-typeahead.js"></script>-->
 	</div>
   </body>
-</html>
-
-
-
-<html>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-</head>
-<body>
-
-
-</body>
 </html>

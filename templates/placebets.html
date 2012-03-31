@@ -13,13 +13,14 @@
 						<tr>
 						  <td class="ModulePositionCell">1.</td>
 						  <td class="ModuleTitleCell"><a class="LnkType1" href="">India</a></td>
-						  <td class="ModulePopCell"><a class="btn btn-info" style="text-align:right;" href="javascript:void(0);" 
-						  onclick="appendBet('India', '10/6')">10/6</a></td>
+						  <td class="ModulePopCell"><a id='betid1' class="btn btn-info" style="text-align:right;" href="javascript:void(0);" 
+						  onclick="appendBet('India', '10/6', this)">10/6</a></td>
 						</tr>						  
 						<tr>
 						  <td class="ModulePositionCell">2.</td>
 						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">SriLanka</a></td>
-						  <td class="ModulePopCell"><a class="btn btn-info" style="text-align:right;"href="">1/6</a></td>
+						  <td class="ModulePopCell"><a id='betid2' class="btn btn-info" style="text-align:right;"href="javascript:void(0);" 
+						  onclick="appendBet('Srilanka', '1/6', this)">1/6</a></td>
 						</tr>						
 					</tbody>
 					</table>
@@ -40,12 +41,13 @@
 						<tr>
 						  <td class="ModulePositionCell">1.</td>
 						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">India</a></td>
-						  <td class="ModulePopCell"><a class="btn btn-primary" style="text-align:right;"href="">10/6</a></td>
+						  <td class="ModulePopCell"><a id='betid3' class="btn btn-primary" style="text-align:right;"href="javascript:void(0);" 
+						  onclick="appendBet('India', '10/6', this)">10/6</a></td>
 						</tr>						  
 						<tr>
 						  <td class="ModulePositionCell">2.</td>
 						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">SriLanka</a></td>
-						  <td class="ModulePopCell"><a class="btn btn-primary" style="text-align:right;"href="">1/6</a></td>
+						  <td class="ModulePopCell"><a id='betid4' class="btn btn-primary" style="text-align:right;"href="">1/6</a></td>
 						</tr>						
 					</tbody>
 					</table>
@@ -210,3 +212,31 @@
 		</div>
 		
 	</div>
+<div id="bet_slip_container" style="width:298px;height:320px;float:right;padding:3px;margin-right:0px;margin-bottom:0px;overflow:auto;" class='well'>
+	<div style="margin-bottom:3px;"><h6 style='font-color:#FFFFFF;'>Betslip</h6></div>
+</div>
+<a id='placebet' style='float:right;' class='btn btn-info'>PlaceBet</a>
+<script>
+$("#placebet").click(function() {
+	            alert("placebt click");
+			    var betArr = [];
+				$('#bet_slip_container').children().each(function(index) {
+					if(index!=0) {
+					 if($(this).text() != "PlaceBet") {
+					   // alert('not placebet');
+						//alert($($(this).children().get(2)).text());
+						stakeVal = $($($(this).children().get(4)).children().get(0)).val();
+						//alert(stakeVal);
+						//alert($(this).attr('id'));
+						if(stakeVal != 0) {
+							betArr.push({'betId':$(this).attr('id'), 'stake':stakeVal});
+						}
+					//alert(index + ': ' + $($($(this).next()).next()).text());});
+				}}});
+				alert(betArr.length);
+				if(betArr.length > 0) {
+					//do ajax post toserver with fuid and betArr
+					showMessage("Bets Placed successfully", 'blue');
+				}
+		});
+</script>
