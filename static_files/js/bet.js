@@ -1,7 +1,7 @@
 /* All Javascript functions of betting app will go into this file */	
 	function ajax_post(type) {
 		if(type == 'home') {
-			FB.Canvas.setAutoResize();
+			//FB.Canvas.setAutoResize();
 			$("div#bet_container").html("");
 			$("div#bet_container").load('https://127.0.0.1:8001/userhome/', function(response, status, xhr) {
 			  if (status == "error") {
@@ -26,6 +26,28 @@
 			$("li").removeClass("active");	
 			$("#placebets").addClass("active");			
 			//alert('hi');
+		} else if(type == 'invite') {
+				FB.Canvas.setAutoResize();
+				//specify redirect uri to handle requests
+				FB.ui({
+					method: 'apprequests',
+					message: 'Become my Buddie',
+					filters: ['app_non_users'],
+					title: 'Become my Buddie'
+				},
+				function (response) {
+					console.log(response)
+				    alert(response.to);
+					if (response && response.to) {
+				   //if sucess do something
+				   //How many people did the user invited?
+					var showManyInvites = String(response.to).split(',').length;
+					alert(showManyInvites);
+					} else {
+					  alert('canceled');
+					  return false;
+					}
+				});
 		}
 	}
 	function appendBet(teamname, odds, betIdElement) {
@@ -38,7 +60,7 @@
 								  <div style='margin-left:87px;' id='odds'> "+odds+"</div>\
 								  <div id='stakeLabel' style='margin-right:5px;float:left;'>Stake</div>\
 								  <div id='valContainer' style='float:left;'>	<input id='stake' name='stake' type='text' style='height:15px;width:40px;margin-top:-2px;'class='span1 stake'></div>\
-								  <div id='towinlabel' style='margin-left:5px;margin-right:2px;float:left;'> To Win  </div>\
+								  <div id='towinlabel' style='margin-left:5px;margin-right:2px;float:left;'> You Win  </div>\
 								  <div id='towin' style=''>23</div>\
 							  </div>";
 		  //check if bet already exists in betslip with betid
@@ -56,7 +78,9 @@
 				if(stakeVal > 0) {
 				    //alert(stakeVal);
 					//alert(userCash);
-					increaseCash(stakeVal, getUserCash());
+					//userCash = userCash + stakeVal;
+					//$('#user_cash').text("Cash "+userCash);
+					//increaseCash(stakeVal, getUserCash());
 				}
 			  });
 			  $(".stake").keyup(function() {
@@ -78,12 +102,14 @@
 							towin=($(this).val()*parseFloat(values[0]/values[1])).toFixed(2);
 							//alert(towin);
 							$($($(this).parent().next().next())).text(towin);
-							decreaseCash(Number($(this).val()), userCash);
+							//userCash = userCash - Number($(this).val()) ;
+							//alert(Number($(this).val()));
+							//$('#user_cash').text("Cash "+userCash);
 							//userCash = getUserCash();
 						} else {
 							showMessage("Oh snap! You do not have enough cash! Please add cash", 'red');
 							$(this).val('');
-							$('#user_cash').text("Cash "+userCash);
+							//$('#user_cash').text("Cash "+userCash);
 						}
 					} else {
 						alert("Maximum Bet Limit Reached");

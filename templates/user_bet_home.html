@@ -37,7 +37,7 @@
 		});
 		
 		var uid, access_token;
-		
+		FB.Canvas.setAutoResize();
 		FB.getLoginStatus(function(response) {
 			//alert(JSON.stringify(response));
 			if (response.status === 'connected') {			
@@ -75,230 +75,17 @@
 		<ul class="nav nav-tabs" style='background-color:#EEEEEE; margin-bottom:0px;' >
 			<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
 			<li id="placebets"><a href="javascript:void(0);" onclick="ajax_post('placebets')">PlaceBets</a></li>
-			<li><a href="#">Invite Friends</a></li>
+			<li><a href="javascript:void(0);" onclick="ajax_post('invite')">Invite Friends</a></li>
 			<li><a href="#">Add Cash</a></li>
 			<li><a href="#">Help</a></li>
 			<a id='user_cash' style="float:right;"class="btn btn-success" href="#">Cash 200</a>			
-		 </ul>	 
-	
-	<div id="bet_container" class="bet_container" style= "border: 1px solid #EEEEEE;background: url(http://taat.pl/grid/10x10_fff1d3d3.gif);">
-		<div style="margin-top:10px;margin-left:10px;">
-			<div class="Module Module210" id="TopGamesInfo_Top10" style="background-color: white">
-					<div class="ModuleHeaderSimple GreenHeader">
-						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Recent Bets</div>
-							<div class="ModuleHeaderSubtitle">cash</div>							
-						</div>
-					</div>
-					
-					<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">Bubble Town</a></td>
-						  <td class="ModulePopCell">2242</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">Mahjongg Dimensions</a></td>
-						  <td class="ModulePopCell">1713</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">3.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bejeweled3/default.htm?intgid=hp_populargames_3">Bejeweled 3</a></td>
-						  <td class="ModulePopCell">1534</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">4.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/jigsaw/default.htm?intgid=hp_populargames_4">Jigsaw</a></td>
-						  <td class="ModulePopCell">1354</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">5.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bookworm/default.htm?intgid=hp_populargames_5">Bookworm</a></td>
-						  <td class="ModulePopCell">1111</td>
-						</tr>
-					  
-					  <tr>
-						<td class="PopulationListFooterCell" colspan="3">
-						  <a class="LnkType1" href="/en/root/gamebrowser.htm?playmode=1&amp;genre=0&amp;q=freeonline&amp;intgid=hp_populargames_all">
-							All Bets
-						  </a>
-						</td>
-					  </tr>
-					</tbody></table>
-					
-					
-				</div>
-				
-				
-			<div class="Module Module210" id="Module_MyGames" style="background-color: white"s>
-					<div class="ModuleHeaderSimple GreenHeader">
-						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Top Bets</div>
-							<div class="ModuleHeaderSubtitle">cash</div>							
-						</div>
-					</div>
-					<div id="MyGamesContents">
-						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">Bubble Town</a></td>
-						  <td class="ModulePopCell">2242</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">Mahjongg Dimensions</a></td>
-						  <td class="ModulePopCell">1713</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">3.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bejeweled3/default.htm?intgid=hp_populargames_3">Bejeweled 3</a></td>
-						  <td class="ModulePopCell">1534</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">4.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/jigsaw/default.htm?intgid=hp_populargames_4">Jigsaw</a></td>
-						  <td class="ModulePopCell">1354</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">5.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bookworm/default.htm?intgid=hp_populargames_5">Bookworm</a></td>
-						  <td class="ModulePopCell">1111</td>
-						</tr>
-					  
-					  <tr>
-						<td class="PopulationListFooterCell" colspan="3">
-						  <a class="LnkType1" href="/en/root/gamebrowser.htm?playmode=1&amp;genre=0&amp;q=freeonline&amp;intgid=hp_populargames_all">
-							All Bets
-						  </a>
-						</td>
-					  </tr>
-					</tbody></table>
-					</div>
-				</div>
-			
-		</div>
-		
-		<div class="Module Module210" id="Module_MyGames" style="margin-left:420px; margin-top:-392px; width:200px;" >
-					<div class="ModuleHeaderSimple GrayHeader">
-						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Livescore</div>							
-						</div>
-					</div>
-					<div id="MyGamesContents">
-						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">India</a></td>
-						  <td class="ModulePopCell">60/2</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">overs</a></td>
-						  <td class="ModulePopCell">13</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">3.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bejeweled3/default.htm?intgid=hp_populargames_3">RR</a></td>
-						  <td class="ModulePopCell">4.7</td>
-						</tr>											  
-					</tbody></table>
-					</div>
-		</div>
-		
-		<div class="Module Module210" id="Module_MyGames" style="margin-left:420px; width:200px;" >
-					<div class="ModuleHeaderSimple GrayHeader">
-						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">UpcomingMatches</div>							
-						</div>
-					</div>
-					<div id="MyGamesContents">
-						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">CSK Vs MI</a></td>
-						  <td class="ModulePopCell">20-2-2012</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">MI Vs KKR</a></td>
-						  <td class="ModulePopCell">20-2-2012</td>
-						</tr>
-					  
-						
-					</tbody></table>
-					</div>
-		</div>
-		
-		<div class="Module Module210" id="Module_MyGames" style="margin-left:420px; width:200px;background-color: white">
-					<div class="ModuleHeaderSimple GrayHeader">
-						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Player</div>
-							<div class="ModuleHeaderSubtitle">cash</div>
-						</div>
-					</div>
-					<div id="MyGamesContents">
-						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">Bubble Town</a></td>
-						  <td class="ModulePopCell">2242</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">Mahjongg Dimensions</a></td>
-						  <td class="ModulePopCell">1713</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">3.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bejeweled3/default.htm?intgid=hp_populargames_3">Bejeweled 3</a></td>
-						  <td class="ModulePopCell">1534</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">4.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/jigsaw/default.htm?intgid=hp_populargames_4">Jigsaw</a></td>
-						  <td class="ModulePopCell">1354</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">5.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bookworm/default.htm?intgid=hp_populargames_5">Bookworm</a></td>
-						  <td class="ModulePopCell">1111</td>
-						</tr>
-					  
-					  <tr>
-						<td class="PopulationListFooterCell" colspan="3">
-						  <a class="LnkType1" href="/en/root/gamebrowser.htm?playmode=1&amp;genre=0&amp;q=freeonline&amp;intgid=hp_populargames_all">
-							All Players
-						  </a>
-						</td>
-					  </tr>
-					</tbody></table>
-					</div>
-		</div>
-			
-	</div>
-	
-	
+		 </ul>
+		 <div id="bet_container" class="bet_container" style= "border: 1px solid #EEEEEE;background: url(http://taat.pl/grid/10x10_fff1d3d3.gif);">
+		 </div>
+	<script type="text/javascript">
+		//for home page
+		ajax_post('home');
+	</script>
 	<!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster 
