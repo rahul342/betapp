@@ -16,7 +16,8 @@
     var uid, access_token;
     
     FB.getLoginStatus(function(response) {
-  		if (response.status === 'connected') {
+		alert(JSON.stringify(response));
+  		if (response.status === 'connected') {			
 		    loggedIn(response);
 	  } else {
 			top.location = encodeURI("https://www.facebook.com/dialog/oauth?client_id={{app_id}}&redirect_uri={{app_uri}}&response_type=token");
@@ -28,8 +29,8 @@
 	    access_token= response.authResponse.accessToken;
 	    FB.api('/me', function(response) {
 	    	  alert(JSON.stringify(response));
-		      $("#betting_root").html("Hi " + response.name + " " + String(access_token));
-		      $("#profile_pic").prepend('<img id="theImg" src="https://graph.facebook.com/'+response.username+'/picture" />');
+		      //$("#betting_root").html("Hi " + response.name + " " + String(access_token));
+		      //$("#profile_pic").prepend('<img id="theImg" src="https://graph.facebook.com/'+response.username+'/picture" />');
 		 });
 	}
  };
