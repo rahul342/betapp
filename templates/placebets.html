@@ -1,5 +1,6 @@
-<div id="bets_list" class="bets_list" style="width:450px; background: url(http://taat.pl/grid/10x10_fff1d3d3.gif);float:left;">
-		
+<div class="modal-body" style="padding:3px; position:absolute;"> 
+<div id="closeButton" style="float:right; margin-top:-5px;margin-left:5px;">  <a class="close" data-dismiss="modal">x</a> </div> 
+<div id="bets_list" class="bets_list" style="width:450px; background: url(http://taat.pl/grid/10x10_fff1d3d3.gif);float:left;">		
 		<div class="item">
 			<div class="Module Module210" id="Module_MyGames" style="width:200px;font-size:100%;">
 				<div class="ModuleHeaderSimple GrayHeader">
@@ -212,10 +213,11 @@
 		</div>
 		
 	</div>
-<div id="bet_slip_container" style="width:298px;height:320px;float:right;padding:3px;margin-right:0px;margin-bottom:0px;overflow:auto;" class='well'>
+<div id="bet_slip_container" style="width:200px;float:right;padding:3px;margin-right:0px;margin-top:20px;overflow:auto;" class='well'>
 	<div style="margin-bottom:3px;"><h6 style='font-color:#FFFFFF;'>Betslip</h6></div>
 </div>
 <a id='placebet' style='float:right;' class='btn btn-info'>PlaceBet</a>
+</div>
 <script>
 $("#placebet").click(function() {
 	            alert("placebt click");
