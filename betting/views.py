@@ -35,17 +35,6 @@ def placebets(request):
     logger.info(app_id)
     return render_to_response('placebets.html', dict(app_id = app_id, app_uri=app_uri))
 
-def userhome(request):
-    if on_production_server:
-        app_id = settings.FACEBOOK_APP_ID_MAIN
-        app_uri = 'https://apps.facebook.com/cricbets/'
-    else:
-        app_id = settings.FACEBOOK_APP_ID_LOCAL
-        app_uri = 'https://apps.facebook.com/cricbetslocal/'
-    
-    logger.info(app_id)
-    return render_to_response('userhome.html', dict(app_id = app_id, app_uri=app_uri))
-
 def home(request):
     logger.info('in home view')
     logger.info(request.POST)
