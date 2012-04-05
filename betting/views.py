@@ -1,15 +1,13 @@
 # Create your views here.
 from betting.models import *
-from django.core.cache import cache
+from datetime import datetime
 from django.shortcuts import render_to_response
 from djangoappengine.utils import on_production_server
-from datetime import datetime
-import time
 import bet_data_fetcher.views as bet_data_views
 import errors
 import logging
 import settings
-from django.http import HttpResponse
+import time
 logger = logging.getLogger(__name__)
 
 
@@ -55,7 +53,7 @@ def home(request):
     user, created = User.objects.get_or_create(fb_id = request.POST['uid'] )
     if created:
         user.name = request.POST['name']
-        user.username = request.POST['username']
+        user.username = request.POST['user_name']
         user.cash_update_time = datetime.now()
         user.add_time = datetime.now()
         user.save()
@@ -64,18 +62,30 @@ def home(request):
         user.has_deactivated = False
         user.save()
     
-    leader = User.objects.order_by('cash').values('fb_id', 'name', 'username', 'cash')[:10]
-    #friend_leader = User.objects.filter(fb_id__in = friends_list)
+    
     bet_data = bet_data_views.get_all_bet_data()
     if not created:
-        user_bets = PlacedBets.objects.filter(user=user).select_related()
+        user_bets = [i.get_ui_dict() for i in PlacedBets.objects.filter(user=user).select_related()]
     else:
         user_bets = []
     home_bet_data = _home_bet_data(bet_data)
     logger.info(home_bet_data)
     #return HttpResponse("hello")
     #TODO: return rendered HTML
-    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, leader=leader))
+    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=user_bets))
+
+
+def get_leader_board(request):
+    friends = request.POST['friends']
+    if friends:
+        friend_uids = [f['uid'] for f in friends]
+        friend_data = User.objects.filter(fb_id__in = friend_uids).values("fb_id", "cash").order_by('cash')
+    else:
+        friend_data = []
+    
+    leader = User.objects.order_by('cash').values('fb_id', 'cash')[:10]
+    
+
 def get_match_bets(request):
     match_id = request.GET.getattr('match_id', None)
     if match_id:
