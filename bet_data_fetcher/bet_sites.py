@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class StanJamer:
     _map = [
-            ("Match Prices", "Match Winner"), 
+            ("Match Prices|Match Winner", "Match Winner"), 
             ("Highest Opening Partnership", "Highest Opening Partnership"),
             ("Highest Score 1st 6 Overs","Highest Score 1st 6 Overs"),
             ("Team of Top Runscorer","Team of Top Runscorer"),
@@ -18,8 +18,7 @@ class StanJamer:
             ("Will There Be A Century?", "Will There Be A Century?"),
         ]
     _tournaments_urls = [r"http://xml.stanjames.com/cricket-ante-post.XML", r"ftp://xml.stanjames.com/cricket-ante-post.XML"]
-    _live_match_urls = [r"http://xml.stanjames.com/Cricket-In-Running.XML", r"ftp://xml.stanjames.com/Cricket-In-Running.XML"]
-    _upcoming_match_urls = ["http://xml.stanjames.com/cricket.XML","ftp://xml.stanjames.com/cricket.XML"]
+    _match_urls = ["http://xml.stanjames.com/cricket.XML","ftp://xml.stanjames.com/cricket.XML"]
     def __init__(self):
         pass
     
@@ -59,8 +58,8 @@ class StanJamer:
         return None
             
             
-    def _get_match_data(self, data):
-        return_val = []
+    def _get_matches_data(self, data):
+        return_val = dict(live_data=[], upcoming_data=[])
         try:
             xml = BeautifulSoup(data, 'xml')
         except TypeError:
@@ -69,7 +68,12 @@ class StanJamer:
         matches = filter(is_valid_match_names('name'), xml.find_all('event'))
         logger.info("Found %d matches" % len(matches))
         for match in matches:
-            match_dict = dict(name=match['name'], bets = [], date = datetime.strptime(match['date']+match['time'], '%Y%m%d%H%M'))
+            if match['date'].strip() != '':
+                live = False
+                match_dict = dict(name=match['name'], bets = [], date = datetime.strptime(match['date']+match['time'], '%Y%m%d%H%M'))
+            else:
+                live = True
+                match_dict = dict(name=match['name'], bets = [], date = datetime.now())
             bets = match.find_all('bettype')
             logger.info("Match %s has total %d bets" % (match['name'],len(bets)))
             for bet in bets:
@@ -82,18 +86,13 @@ class StanJamer:
                     for bet_val in bet.find_all('bet'):
                         bet_data['values'].append(dict(name=bet_val['name'], odd = bet_val['price']))
                     match_dict['bets'].append(bet_data)
-            return_val.append(match_dict)
+            if live:
+                return_val['live_data'].append(match_dict)
+            else:
+                return_val['upcoming_data'].append(match_dict)
         
         return return_val
         
-    def _get_live_match_data(self, data):
-        logger.info("Geting Live data")
-        return self._get_match_data(data)
-            
-    def _get_upcoming_match_data(self, data):
-        return self._get_match_data(data)
-    
-    
     def _fetch_xml_from_url(self, urls):
         """
         Helper function to fetch data after iterating in urls. Checks for outdated time and Urlerror.
@@ -118,8 +117,9 @@ class StanJamer:
         return data
     
     def get_data(self):
+        matches_data = self._get_matches_data(self._fetch_xml_from_url(StanJamer._match_urls))
         return dict(tournament_data = self._get_tournament_data(self._fetch_xml_from_url(StanJamer._tournaments_urls)),
-                    upcoming_data = self._get_upcoming_match_data(self._fetch_xml_from_url(StanJamer._upcoming_match_urls)),
-                    live_data = self._get_live_match_data(self._fetch_xml_from_url(StanJamer._live_match_urls))
+                    upcoming_data = matches_data['upcoming_data'],
+                    live_data = matches_data['live_data']
                     )
                      
