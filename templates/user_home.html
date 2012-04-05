@@ -7,8 +7,7 @@
 						</div>
 					</div>
 					
-					<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
+					<table class="ModuleContent" id="TopGamesInfo_Top10_Table">      
 						<tbody><tr>
 						  <td class="ModulePositionCell">1.</td>
 						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">Bubble Town</a></td>
@@ -55,8 +54,12 @@
 			<div class="Module Module210" id="Module_MyGames" style="background-color: white"s>
 					<div class="ModuleHeaderSimple GreenHeader">
 						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Top Bets</div>
-							<div class="ModuleHeaderSubtitle">cash</div>							
+							<div class="ModuleHeaderSimpleContent">
+								<ul class="nav nav-tabs">
+								<li class="active"><a href="#">Friends</a></li>
+								<li style="background-color:#EEEEEE; "><a href="#">AllPlayers</a></li>
+								</ul>
+							 </div>							
 						</div>
 					</div>
 					<div id="MyGamesContents">
@@ -64,13 +67,17 @@
       
 						<tbody><tr>
 						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">Bubble Town</a></td>
+						  <td class="ModuleTitleCell">
+						  <a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">
+						  <img style="width:30px; height:30px;margin-right:10px;" src="http://graph.facebook.com/604385804/picture?type=square">Rahul</a></td>
 						  <td class="ModulePopCell">2242</td>
 						</tr>
 					  
 						<tr>
 						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">Mahjongg Dimensions</a></td>
+						  <td class="ModuleTitleCell">
+						  <a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">
+						  <img style="width:30px; height:30px;" src="http://graph.facebook.com/604385804/picture?type=square">Sreenivas</a></td>
 						  <td class="ModulePopCell">1713</td>
 						</tr>
 					  
@@ -108,29 +115,26 @@
 		<div class="Module Module210" id="Module_MyGames" style="margin-right:100px; float:right;margin-top:-392px; width:200px;" >
 					<div class="ModuleHeaderSimple GrayHeader">
 						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Livescore</div>							
+							<div class="ModuleHeaderSimpleContent">LiveMatch</div>							
 						</div>
 					</div>
 					<div id="MyGamesContents">
-						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">India</a></td>
-						  <td class="ModulePopCell">60/2</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">overs</a></td>
-						  <td class="ModulePopCell">13</td>
-						</tr>
-					  
-						<tr>
-						  <td class="ModulePositionCell">3.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bejeweled3/default.htm?intgid=hp_populargames_3">RR</a></td>
-						  <td class="ModulePopCell">4.7</td>
-						</tr>											  
+						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">      
+						<tbody>
+						{% if home_bet_data.live %}						
+							{% for match in home_bet_data.live %}
+							<tr>
+							  <td class="ModuleTitleCell"><a class="LnkType1" href="javascript:void(0);" onclick="ajax_post('betmodal')">MI Vs CSK</a></td>
+							  <td class="ModulePopCell"><a class="btn btn-info btn-mini label-info" href="javascript:void(0);" onclick="ajax_post('betmodal')" style="margin-top:-6px;">Placebet</li></td>
+							</tr>
+							{% endfor %}
+						{% else %}
+							<tr>
+							  <td class="ModuleTitleCell"><a class="LnkType1" href="javascript:void(0);">No Live Matches</a></td>							 
+							</tr>
+						{% endif %}
+												  
+																	  
 					</tbody></table>
 					</div>
 		</div>
@@ -138,33 +142,27 @@
 		<div class="Module Module210" id="Module_MyGames" style="margin-right:100px; float:right; margin-top:-280px; width:200px;" >
 					<div class="ModuleHeaderSimple GrayHeader">
 						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">UpcomingMatches</div>							
+							<div class="ModuleHeaderSimpleContent">UpcomingMatches {{ home_bet_data.upcoming|length }}</div>							
 						</div>
 					</div>
 					<div id="MyGamesContents">
-						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">
-      
-						<tbody><tr>
-						  <td class="ModulePositionCell">1.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/bubbletown/default.htm?intgid=hp_populargames_1">CSK Vs MI</a></td>
-						  <td class="ModulePopCell">20-2-2012</td>
-						</tr>
-					  
+						<table class="ModuleContent" id="TopGamesInfo_Top10_Table">      
+						<tbody>						
+						{% for match in home_bet_data.upcoming %}
 						<tr>
-						  <td class="ModulePositionCell">2.</td>
-						  <td class="ModuleTitleCell"><a class="LnkType1" href="/en/mahjonggdimensions/default.htm?intgid=hp_populargames_2">MI Vs KKR</a></td>
-						  <td class="ModulePopCell">20-2-2012</td>
+						  <td class="ModuleTitleCell"><a class="LnkType1" href="">{{ match.name  }}</a></td>
+						  <td class="ModulePopCell">{{ match.date|date:"M d,Y"  }}</td>
 						</tr>
-					  
-						
-					</tbody></table>
+					    {% endfor %}					
+					</tbody>
+					</table>
 					</div>
 		</div>
 		
 		<div class="Module Module210" id="Module_MyGames" style="margin-right:100px; float:right; margin-top:-190px; width:200px;background-color: white">
 					<div class="ModuleHeaderSimple GrayHeader">
 						<div class="ModuleHeaderWrapper">
-							<div class="ModuleHeaderSimpleContent">Player</div>
+							<div class="ModuleHeaderSimpleContent">Tournament</div>
 							<div class="ModuleHeaderSubtitle">cash</div>
 						</div>
 					</div>

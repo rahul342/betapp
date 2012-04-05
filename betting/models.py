@@ -5,8 +5,10 @@ class User(models.Model):
     fb_id = models.IntegerField()
     username = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
-    cash = models.PositiveIntegerField(default=20)
-    has_deactivated = models.BooleanField(default=False) 
+    cash = models.PositiveIntegerField(default=200)
+    has_deactivated = models.BooleanField(default =False) 
+    cash_update_time = models.DateTimeField(null=True)
+    add_date = models.DateTimeField(auto_now_add=True, null=True)
     
     def __unicode__(self):
         return ("fbid=%s username=%s name=%s") % (self.fb_id, self.name, self.username)

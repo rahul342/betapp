@@ -12,7 +12,7 @@
     <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
 	<link href="/static/css/bet.css" rel="stylesheet">
 
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
 	<script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
 	<script type="text/javascript" src="/static/js/bet.js"></script>
@@ -37,7 +37,7 @@
 		});
 		
 		var uid, access_token;
-		FB.Canvas.setAutoResize();
+		//FB.Canvas.setAutoResize();
 		FB.Canvas.setSize({ height: 800 });
 		FB.getLoginStatus(function(response) {
 			//alert(JSON.stringify(response));
@@ -49,12 +49,30 @@
 		});
 		  
 		function loggedIn(response) {
+			post_url = "{{ server_url }}"+"/home/";
 			var uid = response.authResponse.userID;
 			access_token= response.authResponse.accessToken;
+			//get friends who are using application
+			var appFriends;
+			$("div#bet_container").html("<img style='margin-left:330px;margin-top:20px;' src='/static/images/loading.gif' />");
 			FB.api('/me', function(response) {
-				 // alert(JSON.stringify(response));
-				  //$("#betting_root").html("Hi " + response.name + " " + String(access_token));
-				  //$("#profile_pic").prepend('<img id="theImg" src="https://graph.facebook.com/'+response.username+'/picture" />');
+				  name = response.name;
+				  username = response.username;				  
+				  FB.api(
+					  {
+						method: 'fql.query',
+						query: 'select uid, name from user where is_app_user = 1 and uid in (SELECT uid2 FROM friend WHERE uid1 = me())'
+					  },
+					  function(response) {
+					    appFriends=JSON.stringify(response);
+						var data = {uid: uid, name: name, user_name: username, appFriends:appFriends};
+						//alert(JSON.stringify(response));						
+						$.post(post_url, data, function(data) {
+						      $("div#bet_container").html("");
+							  $("div#bet_container").html(data);
+						  });
+					  }
+					);				  
 			 });
 		}
 	 };	  
@@ -69,7 +87,7 @@
 	   }(document));
 	</script>
 	<div id="betting_root"></div>
-	<div id="profile_pic"></div>	
+	<div id="profile_pic"></div>
 	<!-- User Home starts from here-->
 	<div style="width:758px;overflow:hidden; position:absolute; border: 1px solid #EEEEEE;">
 		<!--tabs code-->
@@ -90,7 +108,7 @@
 	<script type="text/javascript">
 		//for home page
 		$('#myModal').hide();
-		ajax_post('home');		
+		//ajax_post('home');		
 	</script>
 	<!-- Le javascript
     ================================================== -->
