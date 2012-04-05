@@ -17,5 +17,6 @@ class PlacedBets(models.Model):
     odds = models.FloatField()
     amount = models.PositiveIntegerField()
     is_resolved = models.BooleanField(default=False)
+    add_time = models.DateTimeField(auto_now_add=True)
     
     

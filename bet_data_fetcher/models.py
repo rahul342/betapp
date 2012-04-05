@@ -25,6 +25,7 @@ class Bet(models.Model):
     category = models.ForeignKey(BetCategory)
     match = models.ForeignKey(Match, null=True)
     tournament = models.ForeignKey(Tournament, null=True)
+    is_cancelled = models.BooleanField(default=False)
     
     def __unicode__(self):
         if self.tournament != None:
