@@ -65,6 +65,8 @@ def home(request):
     #return HttpResponse("hello")
     #TODO: return rendered HTML
     return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, leader=leader))
+
+
 def get_match_bets(request):
     match_id = request.GET.getattr('match_id', None)
     if match_id:
