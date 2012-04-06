@@ -1,5 +1,4 @@
 from bet_data_fetcher import bet_data_settings
-from bet_data_fetcher.models import Match, Tournament
 from datetime import datetime
 import logging
 import os
@@ -13,6 +12,7 @@ def is_valid_match_names(attr):
     return return_func
 
 def store_schedule():
+    from bet_data_fetcher.models import Match, Tournament
     if Tournament.objects.count() == 0:
         Tournament.objects.create(name="IPL 2012", betsite_url='')
     if Match.objects.count() != 0:

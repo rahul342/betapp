@@ -36,10 +36,9 @@ def placebets(request):
     return render_to_response('placebets.html', dict(app_id = app_id, app_uri=app_uri))
 
 def home(request):
-    logger.info('in home view')
-    logger.info(request.POST)
-    time.sleep(5)
+    logger.debug("In home(), POST = ", request.POST)
     user, created = User.objects.get_or_create(fb_id = request.POST['uid'] )
+    request.session['user'] = user
     if created:
         user.name = request.POST['name']
         user.username = request.POST['user_name']
@@ -54,7 +53,7 @@ def home(request):
     
     bet_data = bet_data_views.get_all_bet_data()
     if not created:
-        user_bets = [i.get_ui_dict() for i in PlacedBets.objects.filter(user=user).select_related()]
+        user_bets = [i.get_ui_dict() for i in PlacedBets.objects.filter(user=user).select_related().order_by('-add_time')]
     else:
         user_bets = []
     home_bet_data = _home_bet_data(bet_data)
@@ -67,18 +66,20 @@ def home(request):
 def get_leader_board(request):
     friends = request.POST['friends']
     if friends:
-        friend_uids = [f['uid'] for f in friends]
-        friend_data = User.objects.filter(fb_id__in = friend_uids).values("fb_id", "cash").order_by('cash')
+        friend_uids = [f['uid'] for f in friends] + [request.session.get('user').fb_id]
+        friend_data = User.objects.filter(fb_id__in = friend_uids).values("fb_id", "cash").order_by('rank')
     else:
         friend_data = []
     
-    leader = User.objects.order_by('cash').values('fb_id', 'cash')[:10]
+    leader_data = User.objects.order_by('rank').values('fb_id', 'cash')[:10]
+    
+    return render_to_response('leader_board.html', dict(leader_data=leader_data, friend_data=friend_data))
     
 
-def get_match_bets(request):
-    match_id = request.GET.getattr('match_id', None)
-    if match_id:
-        match_bets = bet_data_views.get_match_bet_data(match_id)
+def get_bets(request):
+    event_id = request.GET.getattr('event_id', None)
+    if event_id:
+        match_bets = bet_data_views.get_match_bet_data(event_id)
         if match_bets:
             #TODO: return rendered HTML
             return match_bets
@@ -88,9 +89,17 @@ def get_match_bets(request):
         return errors.MISSING_PARAMTER
     
 def place_bets(request):
-    #use sessions for user id
-    #configure sessoins
+    user = request.session.get('user')
+    if not user:
+        return errors.USER_NOT_FOUND
     bets = request.POST.getattr()
+    for bet in bets:
+        #verify if bet is active
+        #verify if bet odds are valid
+        #verify if sufficient cash
+        #place bet (create obj, deduct cash)
+        #on success, return success, html to be pushed in recent bets and cash
+        pass
     
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])

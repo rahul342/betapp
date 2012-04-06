@@ -17,6 +17,10 @@ class Match(models.Model):
         team1, team2 = self.name.split(' v ')
         return ("%s v %s") % (utils.get_team_short_name(team1), utils.get_team_short_name(team2))
     
+    def get_acronym_name(self):
+        team1, team2 = self.name.split(' v ')
+        return ("%s v %s") % (utils.get_team_acronym(team1), utils.get_team_acronym(team2))
+    
     def __unicode__(self):
         return "<%s, %s>" % (self.name, str(self.match_date))
     
