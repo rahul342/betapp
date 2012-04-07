@@ -1,10 +1,10 @@
 {% load betting_extras %}
 <div class="row">
 	<div id="left_side" class="span6" >
-		<div class="row-fluid"><div class="span12">
+		<div class="row-fluid"><div class="span12 my-widget">
 		<table id="recent_bets" class='table table-condensed table-bordered'>
-		  <thead style="background-color:#EEEEEE;">
-				<tr><th style="text-align:center;" colspan="2">Recent Bets</th></tr>
+		  <thead>
+				<tr><th colspan="2">Recent Bets</th></tr>
 		  </thead>
 		  <tbody>
 		  {% for bet in user_bets %}
@@ -18,10 +18,10 @@
 		  	</tr>
 		  {% endfor %}
 			</tbody></table></div></div>
-		<div class="row-fluid"><div class="span12">
+		<div class="row-fluid"><div class="span12 my-widget">
 		<table id="Leaderboard" class='table table-condensed table-bordered'>
-		  <thead style="background-color:#EEEEEE;">
-				<tr><th style="text-align:center;" colspan="3">Leader Board</th></tr>
+		  <thead>
+				<tr><th colspan="3">Leader Board</th></tr>
 		  </thead>
 		  <tbody>
 			<tr>
@@ -42,10 +42,10 @@
 		  </tbody></table></div></div>
 	</div>
 	<div id="right_side" class="span6">
-		<div class="row-fluid"><div class="span12">
+		<div class="row-fluid"><div class="span12 my-widget">
 			<table id="recent_bets" class='table table-condensed table-bordered'>
-			  <thead style="background-color:#EEEEEE;">
-					<tr><th style="text-align:center;" colspan="3">Live Matches</th></tr>
+			  <thead>
+					<tr><th colspan="3">Live Matches</th></tr>
 			  </thead>
 			  <tbody>
 				<tr>
@@ -55,10 +55,10 @@
 			  </tbody>
 			</table>
 		</div></div>
-		<div class="row-fluid"><div class="span12">
+		<div class="row-fluid"><div class="span12 my-widget">
 			<table id="recent_bets" class='table table-condensed table-bordered'>
-			  <thead style="background-color:#EEEEEE;">
-					<tr><th style="text-align:center;">Upcoming Matches</th></tr>
+			  <thead>
+					<tr><th>Upcoming Matches</th></tr>
 			  </thead>
 			  <tbody>
 			  {% for match in home_bet_data.upcoming %}

@@ -11,3 +11,11 @@ span.bet_price {
 div.place-bet-btn {
 	vertical-align: middle;
 }
+
+div.my-widget thead {
+	background-color: #CCCCCC;
+}
+
+div.my-widget th {
+	text-align: center;
+}
