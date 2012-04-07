@@ -35,7 +35,7 @@
 		  status     : true, // check login status
 		  cookie     : true, // enable cookies to allow the server to access the session
 		});
-		
+		FB.Canvas.setAutoGrow();
 		var uid, access_token;
 		FB.getLoginStatus(function(response) {
 			//alert(JSON.stringify(response));
@@ -92,7 +92,7 @@
 	<div class="container main_box">
 		<!--tabs code-->
 		<div class="row" >
-				<div class="span4">
+				<div class="span8">
 					<ul class="nav nav-pills"  >
 						<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
 						<li><a href="javascript:void(0);" onclick="ajax_post('invite')">Invite Friends</a></li>
