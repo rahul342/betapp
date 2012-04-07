@@ -1,0 +1,1 @@
+INITIAL_CASH = 200

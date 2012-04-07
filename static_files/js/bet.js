@@ -1,69 +1,43 @@
 /* All Javascript functions of betting app will go into this file */	
-	function ajax_post(type) {
-		if(type == 'home') {
-			//FB.Canvas.setAutoResize();
-			$("div#bet_container").html("");
-			$("div#bet_container").load('https://127.0.0.1:8001/userhome/', function(response, status, xhr) {
+	function invite_friends() {
+		FB.Canvas.setAutoResize();
+		//specify redirect uri to handle requests
+		FB.ui({
+			method: 'apprequests',
+			message: 'Become my Buddie',
+			filters: ['app_non_users'],
+			title: 'Become my Buddie'
+		},
+		function (response) {
+			console.log(response)
+		    alert(response.to);
+			if (response && response.to) {
+		   //if sucess do something
+		   //How many people did the user invited?
+			var showManyInvites = String(response.to).split(',').length;
+			alert(showManyInvites);
+			} else {
+			  alert('canceled');
+			  return false;
+			}
+		});
+	}
+	
+	function show_bet_page(event_id) {
+		FB.Canvas.setAutoResize();	
+		FB.Canvas.setSize({ height: 800 });
+		$("div#myModal").load('https://127.0.0.1:8001/placebets', function(response, status, xhr) {
 			  if (status == "error") {
 				var msg = "Sorry but there was an error: ";
 				alert(msg + xhr.status + " " + xhr.statusText);
 			  }
-			  //alert('Load was performed.');
-			});
-			$("li").removeClass("active");	
-			$("#home").addClass("active");
-			
-		} else if(type == 'placebets') {
-			FB.Canvas.setAutoResize();
-			$("div#bet_container").html("");
-			$("div#bet_container").load('https://127.0.0.1:8001/placebets/', function(response, status, xhr) {
-			  if (status == "error") {
-				var msg = "Sorry but there was an error: ";
-				alert(msg + xhr.status + " " + xhr.statusText);
-			  }			  
-			  //alert('Load was performed.');
-			});
-			$("li").removeClass("active");	
-			$("#placebets").addClass("active");			
-			//alert('hi');
-		} else if(type == 'invite') {
-				FB.Canvas.setAutoResize();
-				//specify redirect uri to handle requests
-				FB.ui({
-					method: 'apprequests',
-					message: 'Become my Buddie',
-					filters: ['app_non_users'],
-					title: 'Become my Buddie'
-				},
-				function (response) {
-					console.log(response)
-				    alert(response.to);
-					if (response && response.to) {
-				   //if sucess do something
-				   //How many people did the user invited?
-					var showManyInvites = String(response.to).split(',').length;
-					alert(showManyInvites);
-					} else {
-					  alert('canceled');
-					  return false;
-					}
-				});
-		} else if(type == 'betmodal') {
-			//FB.Canvas.setAutoResize();	
-			FB.Canvas.setSize({ height: 800 });
-			alert('in betmodal');
-			$("div#myModal").load('https://127.0.0.1:8001/placebets/', function(response, status, xhr) {
-				  if (status == "error") {
-					var msg = "Sorry but there was an error: ";
-					alert(msg + xhr.status + " " + xhr.statusText);
-				  }
-				 // $('#myModal').css('margin-top', (($('#myModal').outerHeight() / 2) * -1)-50).css('margin-left', ($('#myModal').outerWidth() / 2) * -1);
-				  $('#myModal').show();				  
-				  $('#myModal').modal();					  				  
-					  
-			});			
-		}
+			  $('#myModal').css('margin-top', (($('#myModal').outerHeight() / 2) * -1)-50).css('margin-left', ($('#myModal').outerWidth() / 2) * -1);
+			  $('#myModal').show();				  
+			  $('#myModal').modal();					  				  
+				  
+		});			
 	}
+	
 	function appendBet(teamname, odds, betIdElement) {
 			var userCash = getUserCash();
 			alert(userCash);

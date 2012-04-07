@@ -8,9 +8,9 @@
     <meta name="description" content="Betting">	
 	
     <!-- Le styles -->
+    <link href="/static/css/bet.css" rel="stylesheet">
 	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-	<link href="/static/css/bet.css" rel="stylesheet">
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
@@ -41,7 +41,7 @@
 			//alert(JSON.stringify(response));
 			if (response.status === 'connected') {			
 				//loggedIn(response);
-				$.post("https://127.0.0.1:8001/home/",{uid:'604385804', name:'sreenivas', username:'sreenusreenivas'}, function(data) {
+				$.post("https://127.0.0.1:8001/home/",{uid:'719742062', name:'Rahul Agrawal', username:'rahul342'}, function(data) {
 						      $("div#bet_container").html("");
 							  $("div#bet_container").html(data);
 						  });
@@ -89,25 +89,23 @@
 	   }(document));
 	</script>
 	<!-- User Home starts from here-->
-	<div class="container">
+	<div class="container main_box">
 		<!--tabs code-->
 		<div class="row" >
-			<div class="span12" style='background-color:#EEEEEE;'>
-				<div class="span9">
-					<ul class="nav nav-tabs"  >
+				<div class="span4">
+					<ul class="nav nav-pills"  >
 						<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
 						<li><a href="javascript:void(0);" onclick="ajax_post('invite')">Invite Friends</a></li>
 						<li><a class="btn btn-primary" href="#">Add Cash <i class="icon-plus icon-white"></i></a></li>
 						<li><a href="#">Help</a></li>
 					</ul>
 				</div>
-				<div class="span3">
+				<div class="pull-right">
 					<a id='user_cash' class="btn btn-success" href="#">More Cash in 05:00  <i class="icon-time icon-white"></i></a>
 					<a id='user_cash' class="btn btn-success" href="#">$200</a>
 				</div>
-			</div>				
 		 </div>
-		 <div id="bet_container" class="bet_container" style= "border: 1px solid #EEEEEE;">
+		 <div id="bet_container" class="bet_container">
 		 </div>
 		 <div id="myModal" class="modal span10" style="border:5px solid #666666;"></div>
 		<script type="text/javascript">
@@ -115,22 +113,6 @@
 			$('#myModal').hide();
 			//ajax_post('home');		
 		</script>
-	<!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster 
-    <script src="/media/farmerbook/js/jquery.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-transition.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-alert.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-modal.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-dropdown.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-scrollspy.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-tab.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-tooltip.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-popover.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-button.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-collapse.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-carousel.js"></script>
-    <script src="/media/farmerbook/js/bootstrap-typeahead.js"></script>-->
 	</div>
   </body>
 </html>
