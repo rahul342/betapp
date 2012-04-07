@@ -57,21 +57,29 @@ def home(request):
     else:
         user_bets = []
     home_bet_data = _home_bet_data(bet_data)
-    logger.info(home_bet_data)
+    logger.debug(home_bet_data)
     #return HttpResponse("hello")
     #TODO: return rendered HTML
-    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=user_bets))
+    dummy_user_bets = [dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
+                            cash=200, status="Lost", date=datetime.today().date()),
+                       dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
+                            cash=200, status="Won", date=datetime.today().date()),
+                       dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
+                            cash=200, status="Cancelled", date=datetime.today().date()),
+                       dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
+                            cash=200, status="Placed", date=datetime.today().date())]
+    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=dummy_user_bets))
 
 
 def get_leader_board(request):
     friends = request.POST['friends']
     if friends:
         friend_uids = [f['uid'] for f in friends] + [request.session.get('user').fb_id]
-        friend_data = User.objects.filter(fb_id__in = friend_uids).values("fb_id", "cash").order_by('rank')
+        friend_data = User.objects.filter(fb_id__in = friend_uids).values("fb_id", "cash", "rank_cash").order_by('rank_cash')
     else:
         friend_data = []
     
-    leader_data = User.objects.order_by('rank').values('fb_id', 'cash')[:10]
+    leader_data = User.objects.order_by('rank_cash').values('fb_id', 'cash', 'rank_cash')[:10]
     
     return render_to_response('leader_board.html', dict(leader_data=leader_data, friend_data=friend_data))
     
@@ -104,9 +112,9 @@ def place_bets(request):
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])
     for match in data['live_data']:
-        return_dict['live'].append(dict(name=match['name'], id=match['match_obj'].id))
+        return_dict['live'].append(dict(match_name=match['name'], id=match['match_obj'].id))
     
     for match in data['upcoming_data']:
-        return_dict['upcoming'].append(dict(name=match['name'], id=match['match_obj'].id, date=match['date']))
+        return_dict['upcoming'].append(dict(match_name=match['name'], id=match['match_obj'].id, date=match['date']))
         
     return return_dict

@@ -1,12 +1,12 @@
 from django.db import models
-
+import bet_settings
 # Create your models here.
 class User(models.Model):
     fb_id = models.IntegerField()
     username = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
-    cash = models.PositiveIntegerField(default=200)
-    rank = models.IntegerField(null=True)
+    cash = models.PositiveIntegerField(default=bet_settings.INITIAL_CASH)
+    rank_cash = models.IntegerField(default=bet_settings.INITIAL_CASH) #actual cash + unresolved cash
     has_deactivated = models.BooleanField(default =False) 
     cash_update_time = models.DateTimeField(null=True)
     add_date = models.DateTimeField(auto_now_add=True, null=True)

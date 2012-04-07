@@ -1,0 +1,13 @@
+div.main_box {
+	padding-top: 50px;
+}
+
+span.bet_price {
+	font-size: 18px;
+    line-height: 27px;
+    font-weight: bold;
+}
+
+div.place-bet-btn {
+	vertical-align: middle;
+}
