@@ -49,14 +49,15 @@
 					}
 				});
 		} else if(type == 'betmodal') {
-			FB.Canvas.setAutoResize();	
+			//FB.Canvas.setAutoResize();	
 			FB.Canvas.setSize({ height: 800 });
+			alert('in betmodal');
 			$("div#myModal").load('https://127.0.0.1:8001/placebets/', function(response, status, xhr) {
 				  if (status == "error") {
 					var msg = "Sorry but there was an error: ";
 					alert(msg + xhr.status + " " + xhr.statusText);
 				  }
-				  $('#myModal').css('margin-top', (($('#myModal').outerHeight() / 2) * -1)-50).css('margin-left', ($('#myModal').outerWidth() / 2) * -1);
+				 // $('#myModal').css('margin-top', (($('#myModal').outerHeight() / 2) * -1)-50).css('margin-left', ($('#myModal').outerWidth() / 2) * -1);
 				  $('#myModal').show();				  
 				  $('#myModal').modal();					  				  
 					  
