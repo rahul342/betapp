@@ -24,17 +24,6 @@ def start(request):
     logger.info(app_id)
     return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, server_url=server_url))
 
-def placebets(request):
-    if on_production_server:
-        app_id = settings.FACEBOOK_APP_ID_MAIN
-        app_uri = 'https://apps.facebook.com/cricbets/'
-    else:
-        app_id = settings.FACEBOOK_APP_ID_LOCAL
-        app_uri = 'https://apps.facebook.com/cricbetslocal/'
-    
-    logger.info(app_id)
-    return render_to_response('placebets.html', dict(app_id = app_id, app_uri=app_uri))
-
 def home(request):
     logger.debug("In home(), POST = ", request.POST)
     user, created = User.objects.get_or_create(fb_id = request.POST['uid'] )
@@ -100,15 +89,15 @@ def place_bets(request):
     user = request.session.get('user')
     if not user:
         return errors.USER_NOT_FOUND
-    bets = request.POST.getattr()
-    for bet in bets:
+    #bets = request.POST.getattr()
+    #for bet in bets:
         #verify if bet is active
         #verify if bet odds are valid
         #verify if sufficient cash
         #place bet (create obj, deduct cash)
         #on success, return success, html to be pushed in recent bets and cash
-        pass
-    
+     #   pass
+    return render_to_response('place_bets.html')
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])
     for match in data['live_data']:
