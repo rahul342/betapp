@@ -9,14 +9,11 @@
 				  },
 				  function(response) {
 				    appFriends=response;
-					//alert(JSON.stringify(response));
 					//store fuids in array
 					var friends_arr = [];
 					for (obj in appFriends) {
-						//alert(appFriends[obj].uid);
 						friends_arr.push(appFriends[obj].uid);
 					}
-					//alert(friends_arr[0]);
 					FB.ui({
 						method: 'apprequests',
 						message: 'Become my Buddie in this cool betting application',
@@ -27,15 +24,11 @@
 					function (response) {
 						console.log(response)
 						$('#loading_image').remove();
-					   // alert(response.to);
 						if (response && response.to) {
 					   //if sucess do something
 					   //How many people did the user invited?
 						var showManyInvites = String(response.to).split(',').length;
-						
-						alert(showManyInvites);
 						} else {
-						  alert('canceled');
 						  return false;
 						}
 					});
@@ -46,11 +39,12 @@
 	}
 	
 	function show_bet_page(parent, event_id) {
-		$.post("https://127.0.0.1:8001/getbets/",{event_id:event_id}, function(data) {
+		$.get("https://127.0.0.1:8001/getbets/",{event_id:event_id}, function(data) {
 			  //TODO: Handle non-success cases
 			if(data.result == "ok" ) {
+				$("div#myModal").html("");
 				$("div#myModal").append(data.html);
-				$('#myModal').css({width: '800px','margin-left': function () { return -($(this).width() / 2); }, top:'35%'});
+				$('#myModal').css({width: '850px','margin-left': function () { return -($(this).width() / 2); }, top:'35%'});
 				$('#myModal').modal();
 			} else if (data.result == "error") {
 				showMessage('refresh', 'red', false );
@@ -71,14 +65,14 @@
 				+"  <div class='span12' style='margin-top:-10px;'>"+betname+" : "+teamname+"</div>"					  		
 			 +"</div>"
 			 +"<div class='row-fluid' style='margin-top:10px;'>"
-				  +"<div class='span2'>"+odds +" x </div>"
+				  +"<div id=odds_"+$(betIdElement).attr('id')+" class='span2'><h5>"+odds +" x</h5></div>"
 				  +"<div class='span3'><input id='stake_"+$(betIdElement).attr('id')+"' name='stake' type='text' style='height:15px;width:40px;margin-top:-2px;'></div>"
 				 +" <div class='span7' id='you_win_"+$(betIdElement).attr('id')+"'>You win 0</div>"					  		
 			 +"</div>"
 			+"</div>";			
 		  //check if bet already exists in betslip with betid
 		  if ($("#bet_"+$(betIdElement).attr('id')).length > 0 ){
-			  alert('This bet is already in betslip');
+		  	  showMessage("bet_present", 'red', true);
 		  } else {
 		     $('#bet_slip_container').append(betcontent);
 			 $("#bet_"+$(betIdElement).attr('id')).bind('close', function () {
@@ -105,7 +99,7 @@
 						// If Maximum Bet Limit Reaches
 						$(this).val($(this).val().substring(0, maxCharsAllowed));
 						toWin=($(this).val()*parseFloat(odds)).toFixed(2);
-						$("#you_win_"+$(betIdElement).attr('id')).text("You win "+toWin);
+						$("#you_win_"+$(betIdElement).attr('id')).text("You win " + toWin);
 					}
 				}
 			  });			  
@@ -113,7 +107,6 @@
 	}
 	
 	function placebet_click() {
-		alert("placebt click");
 	    var betArr = [];
 	    var bet_cash=0;
 	    if($('#bet_slip_container').children().length > 1) {
@@ -121,13 +114,13 @@
 				//avoid betslip label
 				if(index!=0) {
 					var bet_id= $(this).attr('id').substring(4);
-					alert(bet_id);
 					if(!isNaN(parseInt(bet_id))) {
 					stakeVal = parseInt($('#stake_'+bet_id).val());
 					if(!isNaN(stakeVal)) {
 						bet_cash += stakeVal;
 						if(stakeVal != 0) {
-							betArr.push({'betId' : bet_id, 'stake' : stakeVal});
+							odds = $("#odds_"+bet_id).text().split(" ")[0];
+							betArr.push({'bet_id' : bet_id, 'stake' : stakeVal, 'odds': odds});
 						}
 					}
 				}
@@ -136,14 +129,25 @@
 	    }
 		//if bet array containts betlist values to post to server
 		if(betArr.length > 0) {			
-			alert(bet_cash);
 			if(bet_cash >= getUserCash()) {
 				showMessage("less_cash", 'red', true);
 			} else {
 				//do ajax post toserver with fuid and betArr
 				emptyBetList();				
-				addNoBetsText("Bets successfully Placed");			
-				showMessage("bet_success", 'blue', true);
+				addNoBetsText("Placing Bets. Hold on.");	
+				$.post('/placebets/', {'bet_arr': JSON.stringify(betArr)}, function(response) {
+					emptyBetList();
+					if(response.result == "ok") {				
+						addNoBetsText("Bets successfully Placed");			
+						showMessage("bet_success", 'blue', true);
+						decreaseCash(bet_cash);
+					}
+					else {
+						addNoBetsText("Please try again.");			
+						showMessage("refresh", 'blue', true);
+					}	
+				});
+				
 			}
 		} else {
 	    	showMessage("no_bets", 'red', true);
@@ -159,8 +163,6 @@
 			//avoid betslip label
 			if(index!=0) {
 				var bet_id= $(this).attr('id').substring(4);
-				//alert(bet_id);
-				//alert($('#you_win_'+bet_id).text());
 				$(this).remove();				
 			}
 		});
@@ -174,13 +176,16 @@
 	    if(message.length > 0) {
 	    	if(message == 'refresh') {
 	    		msgText = "Oops! There was an error. Please refresh this page.";
-	    		//var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>Oops! There was an error. Please refresh this page.</strong></div>";
 	    	} else if (message == 'no_bets') {
-	    		msgText = "Please place bets";
+	    		msgText = "Stake some money and place bets, punter!";
 	    	} else  if(message == 'less_cash' ) {
-	    		msgText = "Oh snap! You don't have enough cash to place bets. Please buy cash";
-	    	} else if(mesaage == "bet_success") {
-	    		msgText = "your bets are successfully placed."
+	    		msgText = "Oh snap! You don't have enough cash to place bets.";
+	    	} else if(message == "bet_success") {
+	    		msgText = "Bets successfully placed & Fingers crossed."
+	    	} else if(message == "odds expired") {
+	    		msgText = "These odds have expired. Please try again."
+	    	} else if(message == "bet_present") {
+	    		msgText = "These bet is already present in the slip."
 	    	}
 	    	if(color=='red') {
 				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+msgText+"</strong></div>";
@@ -207,20 +212,18 @@
 		}
 	}
 	
-	function decreaseCash(amount, totalCash) {
-		cashUpdate = totalCash - Number(amount);
-		cashText = "Cash "+ cashUpdate;
-		$('#user_cash').text(cashText);
-		totalCash = cashUpdate;
+	function decreaseCash(amount) {
+		cashUpdate = parseInt(getUserCash(),10) - Number(amount);
+		$('#user_cash').text("$"+cashUpdate);
 	}
 	
-	function increaseCash(amount, totalCash) {
-		//alert('increasing cash');
-		cashUpdate =parseInt(totalCash,10) + parseInt(amount,10);
-		//alert(cashUpdate);
-		//alert(totalCash + amount);
-		cashText = "Cash "+ cashUpdate;
-		$('#user_cash').text(cashText);
+	function increaseCash(amount) {
+		cashUpdate = parseInt(getUserCash(),10) + parseInt(amount,10);
+		$('#user_cash').text("$"+cashUpdate);
+	}
+	
+	function setUserCash(amount) {
+		$('#user_cash').text("$"+amount);
 	}
 	
 	function showMatch() {

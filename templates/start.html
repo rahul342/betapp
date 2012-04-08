@@ -53,12 +53,12 @@
 			post_url = "{{ server_url }}"+"/home/";
 			var uid = response.authResponse.userID;
 			access_token= response.authResponse.accessToken;
-			expiry=response.expiresIn;
+			expiry=response.authResponse.expiresIn;
 			//get friends who are using application
 			var appFriends;
 			FB.api('/me', {"fields": ["name", "username", "timezone"], "access_token": access_token}, function(response) {
 				  name = response.name;
-				  username = response.username;		
+				  username = response.username;
 				  var data = {uid: uid, name: name, user_name: username, expiry: expiry, timezone: response.timezone};
 				  $.post(post_url, data, function(data) {
 						      $("div#bet_container").html("");
@@ -95,7 +95,7 @@
 	</script>
 	<!-- User Home starts from here-->
 	<div class="container main_box">
-		<div id="myModal" class="modal" style="display:none"></div>
+		<div id="myModal" class="modal" style="display:none;max-height:600px"></div>
 		<!--tabs code-->
 		<div class="row" >
 				<div class="span8">
@@ -108,7 +108,7 @@
 				</div>
 				<div class="pull-right">
 					<a id='user_cash_time' class="btn btn-success" href="#">More Cash in 05:00  <i class="icon-time icon-white"></i></a>
-					<a id='user_cash' class="btn btn-success" href="#">$200</a>
+					<a id='user_cash' class="btn btn-success" href="#">Cash..</a>
 				</div>
 		 </div>
 		 <div id="bet_container" class="bet_container">

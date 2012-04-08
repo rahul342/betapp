@@ -19,23 +19,23 @@ def store_schedule():
         return
     all_data = map(lambda x: x.strip().split(','), open(os.path.join(os.path.dirname(__file__), 'data/matches.csv'),'r').readlines())
     for data in all_data:
-        Match.objects.create(name=data[1], match_date=datetime.strptime(data[0],"%Y%m%dT%H%M%SZ").date(), betsite_url='')
+        Match.objects.create(name=data[1], name_lower = data[1].lower(), match_date=datetime.strptime(data[0],"%Y%m%dT%H%M%SZ").date(), betsite_url='')
         
 def get_team_short_name(team_name):
     for team_map in bet_data_settings.IPL_TEAMS_MAP:
-        if team_map[0] == team_name:
+        if team_map[0].lower() == team_name.lower():
             return team_map[1]
     
     return None
 
 def get_team_acronym(team_name):
     for team_map in bet_data_settings.IPL_TEAMS_MAP:
-        if team_map[0] == team_name:
+        if team_map[0].lower() == team_name.lower():
             return team_map[2]
     
     return None
 
 def convert_fraction_to_decimal(odd):
     num, den = map(float, odd.strip().split('/'))
-    return round(num/den, 2)
+    return round((num+den)/den, 2)
     

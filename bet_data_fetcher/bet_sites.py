@@ -16,6 +16,12 @@ class StanJamer:
             ("Top (.+) Batsman.*", "Top %s Batsman"),
             ("Top (.+) Wicket-taker.*", "Top %s Wicket-taker"),
             ("Will There Be A Century?", "Will There Be A Century?"),
+            ("Next Man Out", "Next Man Out"),
+            ("(.+) Total Runs 3-Way \(20 Overs\)","%s Total Runs 3-Way (20 Overs)"),
+            ("(.+) Total Runs 2-Way \(20 Overs\)", "%s Total Runs 2-Way (20 Overs)"),
+            ("(.+) Total Runs \(Odd/Even\)", "%s Total Runs (Odd/Even)"),
+            ("(.+) Runs 1st 6 Overs \(2-Way\)", "%s Runs 1st 6 Overs (2-Way)"),
+            ("(.+) Warriors Wicket Dismissal Method", "%s Warriors Wicket Dismissal Method"),
         ]
     _tournaments_urls = [r"http://xml.stanjames.com/cricket-ante-post.XML", r"ftp://xml.stanjames.com/cricket-ante-post.XML"]
     _match_urls = ["http://xml.stanjames.com/cricket.XML","ftp://xml.stanjames.com/cricket.XML"]
@@ -86,7 +92,6 @@ class StanJamer:
                     continue
                 matched_betname = self._get_matched_betname(bet['name'])
                 if matched_betname is not None:
-                    logger.info("Matched %s bet" % matched_betname)
                     bet_data = dict(name = matched_betname, is_running = bool(bet['inrunning']), values = [])
                     for bet_val in bet.find_all('bet'):
                         bet_data['values'].append(dict(name=bet_val['name'], odd = convert_fraction_to_decimal(bet_val['price'])))

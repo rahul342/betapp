@@ -8,6 +8,7 @@ class Tournament(models.Model):
     
 class Match(models.Model):
     name = models.CharField(max_length=500)
+    name_lower = models.CharField(max_length=500)
     date = models.DateField(auto_now_add=True)
     match_date = models.DateField()
     betsite_url = models.URLField(verify_exists=False)

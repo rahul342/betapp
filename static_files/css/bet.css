@@ -34,6 +34,7 @@ div.my-widget th {
 	background-color: #CCCCCC;
 	height:250px;
 	overflow:auto;
+	margin-bottom:10px;
 }
 
 .bet_slip_label {

@@ -30,7 +30,7 @@ def _map_data_to_obj(data):
                 if bet_val_obj.name == bet_val_dict['name']:
                     bet_val_dict['bet_val_obj'] = bet_val_obj
                     break
-            if not bet_val_dict.has_key("bet_obj"):
+            if not bet_val_dict.has_key("bet_val_obj"):
                 logger.info('Bet value %s does not exist for %s bet. Creating one.' % (bet_val_dict['name'], str(bet_obj)))
                 bet_val_obj = BetValue.objects.create(name=bet_val_dict['name'], bet=bet_obj)
                 bet_val_dict['bet_val_obj'] = bet_val_obj
@@ -52,7 +52,7 @@ def _map_data_to_obj(data):
     for matches_data in [data['live_data'], data['upcoming_data']]:
         for match_data in matches_data:
             logger.debug("Got match from stie - %s, %s" % (str(match_data['date'].date()), match_data['name']))
-            match_data['match_obj'] = match_obj = Match.objects.get(match_date=match_data['date'].date(), name=match_data['name'])
+            match_data['match_obj'] = match_obj = Match.objects.get(match_date=match_data['date'].date(), name_lower=match_data['name'].lower())
             match_bet_objs = Bet.objects.filter(match=match_obj)
             logger.debug("Found %d bets for match - %s" % (len(match_bet_objs), str(match_obj)))
             for bet in match_data['bets']:
@@ -95,7 +95,7 @@ def get_bet_value_data(bet_value_id):
         return
 
     data = get_all_bet_data()
-    for bet_val_data in + [i for match in (data['upcoming_data'] + data['live_data'] + [data['tournament_data']]) for bet in match['bets'] for i in bet['values']]:
+    for bet_val_data in [i for match in (data['upcoming_data'] + data['live_data'] + [data['tournament_data']]) for bet in match['bets'] for i in bet['values']]:
         if bet_val_data['bet_val_obj'].id == bet_value_id:
             return bet_val_data
     return None

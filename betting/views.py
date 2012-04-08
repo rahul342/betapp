@@ -4,6 +4,7 @@ from datetime import datetime
 from decorators import jsonify
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
+from django.utils import simplejson
 from djangoappengine.utils import on_production_server
 import bet_data_fetcher.views as bet_data_views
 import errors
@@ -11,7 +12,7 @@ import logging
 import settings
 import time
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.DEBUG)
 
 def start(request):
     if on_production_server:
@@ -22,19 +23,15 @@ def start(request):
         app_id = settings.FACEBOOK_APP_ID_LOCAL
         app_uri = 'https://apps.facebook.com/cricbetslocal/'
         server_url = settings.SERVER_URL_LOCAL
-    if request.GET['request_ids']:
-        if request.GET['ref']:
-            app_uri += "?request_ids = "+request.GET['request_ids']
-        else:
-            #redirect uri masti
-    logger.info(app_id)
+
     return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, server_url=server_url))
 
 def home(request):
     logger.debug("In home(), POST = ", request.POST)
     user, created = User.objects.get_or_create(fb_id = request.POST['uid'])
     request.session.flush()
-    request.session['user'] = user
+    request.session['user_id'] = user.id
+    request.session['fb_id'] = user.fb_id
     request.session.set_expiry(int(request.POST['expiry']))
     request.session['timezone'] = float(request.POST['timezone'])
     
@@ -60,21 +57,13 @@ def home(request):
     logger.debug(home_bet_data)
     #return HttpResponse("hello")
     #TODO: return rendered HTML
-    dummy_user_bets = [dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
-                            cash=200, status="Lost", date=datetime.today().date()),
-                       dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
-                            cash=200, status="Won", date=datetime.today().date()),
-                       dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
-                            cash=200, status="Cancelled", date=datetime.today().date()),
-                       dict(match_name='Rajashtan v Deccan', bet_name='Highest Opening Partnerships', bet_value_name='Rajasthan Royals',
-                            cash=200, status="Placed", date=datetime.today().date())]
-    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=dummy_user_bets))
+    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=user_bets, user=user))
 
 
 def get_leader_board(request):
     friends = request.POST['friends']
     if friends:
-        friend_uids = [f['uid'] for f in friends] + [request.session.get('user').fb_id]
+        friend_uids = [f['uid'] for f in friends] + [request.session.get('fb_id')]
         friend_data = User.objects.filter(fb_id__in = friend_uids).values("fb_id", "cash", "rank_cash").order_by('rank_cash')
     else:
         friend_data = []
@@ -85,9 +74,10 @@ def get_leader_board(request):
     
 @jsonify
 def get_bets(request):
-    event_id = request.GET.getattr('event_id', None)
+    event_id = request.GET.get('event_id', None)
     if not event_id:
         raise errors.MISSING_PARAMETER()
+    event_id = int(event_id)
     if event_id == -1:
         bet_data = bet_data_views.get_tournament_bet_data()
     else:
@@ -98,28 +88,43 @@ def get_bets(request):
         col0_ht = col1_ht = 0 #height of the HTML columsn ~ number of bet values
         for bet in bet_data['bets']:
             if col0_ht == 0 or col0_ht <= col1_ht:
-                col0_ht= col0_ht + len(bet['values'])
+                col0_ht= col0_ht + len(bet['values']) + 1
                 cols[0].append(bet)
             else:
-                col1_ht= col1_ht + len(bet['values'])
+                col1_ht= col1_ht + len(bet['values']) + 1
                 cols[1].append(bet)
         return render_to_string('place_bets.html', dict(name=bet_data['name'], date=bet_data['date'], columns=cols))
     else:
         raise errors.EVENT_ID_NOT_FOUND()
     
+@jsonify
 def place_bets(request):
-    user = request.session.get('user')
+    user = User.objects.get(id=request.session.get('user_id'))
     if not user:
         raise errors.USER_NOT_FOUND
-    #bets = request.POST.getattr()
-    #for bet in bets:
-        #verify if bet is active
-        #verify if bet odds are valid
-        #verify if sufficient cash
+    bets = request.POST.get('bet_arr', None)
+    if not bets:
+        raise errors.MISSING_PARAMETER;
+    bets = simplejson.loads(bets)
+    if not bets:
+        raise errors.MISSING_PARAMETER
+    for bet in bets:
+        bet_val_data = bet_data_views.get_bet_value_data(int(bet['bet_id']))
+        if not bet_val_data:
+            raise errors.BET_ID_NOT_FOUND
+        #TODO: verify if bet is active
+        if bet_val_data['odd'] != float(bet['odds']):
+            raise errors.BET_ODD_EXPIRED
+            
+        stake = int(bet['stake'])
+        if user.cash - stake < 0:
+            raise errors.NOT_ENOUGH_CASH
         #place bet (create obj, deduct cash)
-        #on success, return success, html to be pushed in recent bets and cash
-     #   pass
-    return render_to_response('place_bets.html')
+        PlacedBets.objects.create(user=user, bet_value=bet_val_data['bet_val_obj'], odds=bet_val_data['odd'], amount=stake)
+        user.cash = user.cash - stake
+        user.save()
+    return "success"
+
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])
     for match in data['live_data']:

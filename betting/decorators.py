@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.utils.safestring import SafeUnicode
+import logging
 
 
 def jsonify(func):
@@ -10,10 +12,10 @@ def jsonify(func):
             if isinstance(response, dict):
                 if 'result' not in response:
                     response['result'] = 'ok'
-            elif isinstance(response, str):
-                response = dict(html = str, result = 'ok')
+            elif isinstance(response, SafeUnicode) or isinstance(response, str):
+                response = dict(html = response, result = 'ok')
             else:
-                response = dict(result='error', 'Error in View')
+                response = dict(result='error', message='error in view')
         except KeyboardInterrupt:
             raise
         except Exception, e:
