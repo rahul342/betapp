@@ -26,7 +26,7 @@ class StanJamer:
         pass
     
     def _get_tournament_data(self, data):
-        return_val = dict()
+        return_val = dict(name="Indian Premier League 2012", date=datetime.today(), bets=[])
         try:
             xml = BeautifulSoup(data, 'xml')
         except TypeError:
@@ -38,10 +38,15 @@ class StanJamer:
         bet = ipl_tourn.find('bettype',dict(name="Tournament Outright"))
         if bet is None  or bet['suspended']  == 'true':
             return return_val
-        return_val['date'] = datetime.strptime(bet['bet-start-date']+bet['bet-start-time'], '%Y%m%d%H%M')
-        return_val['values'] = []
+        bet_dict = dict()
+        bet_dict['name'] = "Tournament Winner"
+        bet_dict['date'] = datetime.strptime(bet['bet-start-date']+bet['bet-start-time'], '%Y%m%d%H%M')
+        bet_dict['values'] = []
         for bet_val in bet.find_all('bet'):
-            return_val['values'].append(dict(name=bet_val['name'], odd = bet_val['price']))
+            bet_dict['values'].append(dict(name=bet_val['name'], odd = convert_fraction_to_decimal(bet_val['price'])))
+            
+        return_val['bets'].append(bet_dict)
+        
         
         return return_val
     
@@ -84,7 +89,7 @@ class StanJamer:
                     logger.info("Matched %s bet" % matched_betname)
                     bet_data = dict(name = matched_betname, is_running = bool(bet['inrunning']), values = [])
                     for bet_val in bet.find_all('bet'):
-                        bet_data['values'].append(dict(name=bet_val['name'], odd = bet_val['price']))
+                        bet_data['values'].append(dict(name=bet_val['name'], odd = convert_fraction_to_decimal(bet_val['price'])))
                     match_dict['bets'].append(bet_data)
             if live:
                 return_val['live_data'].append(match_dict)

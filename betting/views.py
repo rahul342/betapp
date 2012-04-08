@@ -1,10 +1,12 @@
 # Create your views here.
 from betting.models import *
 from datetime import datetime
+from decorators import jsonify
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
 from djangoappengine.utils import on_production_server
 import bet_data_fetcher.views as bet_data_views
-import status
+import errors
 import logging
 import settings
 import time
@@ -77,23 +79,34 @@ def get_leader_board(request):
     
     return render_to_response('leader_board.html', dict(leader_data=leader_data, friend_data=friend_data))
     
-
+@jsonify
 def get_bets(request):
     event_id = request.GET.getattr('event_id', None)
-    if event_id:
-        match_bets = bet_data_views.get_match_bet_data(event_id)
-        if match_bets:
-            #TODO: return rendered HTML
-            return match_bets
-        else:
-            return status.MATCH_ID_NOT_FOUND
+    if not event_id:
+        raise errors.MISSING_PARAMETER()
+    if event_id == -1:
+        bet_data = bet_data_views.get_tournament_bet_data()
     else:
-        return status.MISSING_PARAMTER
+        bet_data = bet_data_views.get_match_bet_data(event_id)
+    if bet_data:
+        #First split into columns
+        cols = [[],[]]
+        col0_ht = col1_ht = 0 #height of the HTML columsn ~ number of bet values
+        for bet in bet_data['bets']:
+            if col0_ht == 0 or col0_ht <= col1_ht:
+                col0_ht= col0_ht + len(bet['values'])
+                cols[0].append(bet)
+            else:
+                col1_ht= col1_ht + len(bet['values'])
+                cols[1].append(bet)
+        return render_to_string('place_bets.html', dict(name=bet_data['name'], date=bet_data['date'], columns=cols))
+    else:
+        raise errors.EVENT_ID_NOT_FOUND()
     
 def place_bets(request):
     user = request.session.get('user')
     if not user:
-        return status.USER_NOT_FOUND
+        raise errors.USER_NOT_FOUND
     #bets = request.POST.getattr()
     #for bet in bets:
         #verify if bet is active

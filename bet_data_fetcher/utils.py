@@ -34,3 +34,8 @@ def get_team_acronym(team_name):
             return team_map[2]
     
     return None
+
+def convert_fraction_to_decimal(odd):
+    num, den = map(float, odd.strip().split('/'))
+    return round(num/den, 2)
+    

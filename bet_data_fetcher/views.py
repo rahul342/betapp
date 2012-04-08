@@ -35,7 +35,7 @@ def _map_data_to_obj(data):
                 bet_val_obj = BetValue.objects.create(name=bet_val_dict['name'], bet=bet_obj)
                 bet_val_dict['bet_val_obj'] = bet_val_obj
         
-    if data['tournament_data']:
+    if data['tournament_data']['bets']:
         tourn_bet_obj = Bet.objects.exclude(tournament = None)
         if tourn_bet_obj:
             logger.debug('Tournament bet - %s found' % str(tourn_bet_obj))
@@ -46,8 +46,8 @@ def _map_data_to_obj(data):
             if created:
                 logger.info("New Bet Category %s created" % str(categ))
             tourn_bet_obj = Bet.objects.create(category=categ, match=None, tournament=Tournament.objects.all()[0])
-        data['tournament_data']['tourn_obj'] = tourn_bet_obj
-        match_bet_values(data['tournament_data']['values'], tourn_bet_obj)
+        data['tournament_data']['bets'][0]['tourn_obj'] = tourn_bet_obj
+        match_bet_values(data['tournament_data']['bets'][0]['values'], tourn_bet_obj)
                 
     for matches_data in [data['live_data'], data['upcoming_data']]:
         for match_data in matches_data:
@@ -86,12 +86,16 @@ def get_match_bet_data(match_id):
             return match_bet_data
     return None
 
+def get_tournament_bet_data():
+    data = get_all_bet_data()
+    return data['tournament_data']
+
 def get_bet_value_data(bet_value_id):
     if bet_value_id is None:
         return
 
     data = get_all_bet_data()
-    for bet_val_data in data['tournament_data']['values'] + [i for match in data['upcoming_data'] for bet in match['bets'] for i in bet['values']]:
+    for bet_val_data in + [i for match in (data['upcoming_data'] + data['live_data'] + [data['tournament_data']]) for bet in match['bets'] for i in bet['values']]:
         if bet_val_data['bet_val_obj'].id == bet_value_id:
             return bet_val_data
     return None
