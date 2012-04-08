@@ -38,13 +38,12 @@
 		FB.Canvas.setAutoGrow();
 		var uid, access_token;
 		FB.getLoginStatus(function(response) {
-			//alert(JSON.stringify(response));
-			if (response.status === 'connected') {			
-				//loggedIn(response);
-				$.post("https://127.0.0.1:8001/home/",{uid:'719742062', name:'Rahul Agrawal', username:'rahul342'}, function(data) {
-						      $("div#bet_container").html("");
-							  $("div#bet_container").html(data);
-						  });
+			if (response.status === 'connected') {	
+				loggedIn(response);
+				//$.post("https://127.0.0.1:8001/home/",{uid:'719742062', name:'Rahul Agrawal', username:'rahul342'}, function(data) {
+				//		      $("div#bet_container").html("");
+				//			  $("div#bet_container").html(data);
+				//		  });
 		  } else {
 				top.location = encodeURI("https://www.facebook.com/dialog/oauth?client_id={{app_id}}&redirect_uri={{app_uri}}&response_type=token");
 		  }
@@ -54,13 +53,23 @@
 			post_url = "{{ server_url }}"+"/home/";
 			var uid = response.authResponse.userID;
 			access_token= response.authResponse.accessToken;
+			expiry=response.expiresIn;
 			//get friends who are using application
 			var appFriends;
-			$("div#bet_container").html("<img style='margin-left:330px;margin-top:20px;' src='/static/images/loading.gif' />");
-			FB.api('/me', function(response) {
+			FB.api('/me', {"fields": ["name", "username", "timezone"], "access_token": access_token}, function(response) {
 				  name = response.name;
-				  username = response.username;				  
-				  FB.api(
+				  username = response.username;		
+				  var data = {uid: uid, name: name, user_name: username, expiry: expiry, timezone: response.timezone};
+				  $.post(post_url, data, function(data) {
+						      $("div#bet_container").html("");
+							  $("div#bet_container").html(data);
+						  });		  
+				  				  
+			 });
+		}
+		
+		function load_friends_leaderboard() {
+			FB.api(
 					  {
 						method: 'fql.query',
 						query: 'select uid, name from user where is_app_user = 1 and uid in (SELECT uid2 FROM friend WHERE uid1 = me())'
@@ -69,13 +78,9 @@
 					    appFriends=JSON.stringify(response);
 						var data = {uid: uid, name: name, user_name: username, appFriends:appFriends};
 						//alert(JSON.stringify(response));						
-						$.post(post_url, data, function(data) {
-						      $("div#bet_container").html("");
-							  $("div#bet_container").html(data);
-						  });
+						//TODO: Call leaderboard view
 					  }
-					);				  
-			 });
+					);
 		}
 	 };	  
 
@@ -106,6 +111,7 @@
 				</div>
 		 </div>
 		 <div id="bet_container" class="bet_container">
+		 	<img style='margin-left:330px;margin-top:20px;' src='/static/images/loading.gif' />
 		 </div>
 		 <div id="myModal" class="modal span10" style="border:5px solid #666666;"></div>
 		<script type="text/javascript">

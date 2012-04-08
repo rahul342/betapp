@@ -2,13 +2,13 @@
 # If you want to use a different backend you have to remove all occurences
 # of "djangoappengine" from this file.
 from djangoappengine.settings_base import *
-
 import os
 
 # Activate django-dbindexer for the default database
 DATABASES['native'] = DATABASES['default']
 DATABASES['default'] = {'ENGINE': 'dbindexer', 'TARGET': 'native'}
 AUTOLOAD_SITECONF = 'indexes'
+USE_L10N = True
 
 SECRET_KEY = '=r-$b*8hglm+858&9t043hlm6-&6-3d3vfc4((7yd0dbrakhvi'
 
