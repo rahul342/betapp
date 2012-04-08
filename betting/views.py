@@ -20,7 +20,11 @@ def start(request):
         app_id = settings.FACEBOOK_APP_ID_LOCAL
         app_uri = 'https://apps.facebook.com/cricbetslocal/'
         server_url = settings.SERVER_URL_LOCAL
-    
+    if request.GET['request_ids']:
+        if request.GET['ref']:
+            app_uri += "?request_ids = "+request.GET['request_ids']
+        else:
+            #redirect uri masti
     logger.info(app_id)
     return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, server_url=server_url))
 
