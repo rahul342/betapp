@@ -1,130 +1,186 @@
 /* All Javascript functions of betting app will go into this file */	
 	function invite_friends() {
-		FB.Canvas.setAutoResize();
+		//FB.Canvas.setAutoResize();
 		//specify redirect uri to handle requests
-		FB.ui({
-			method: 'apprequests',
-			message: 'Become my Buddie',
-			filters: ['app_non_users'],
-			title: 'Become my Buddie'
-		},
-		function (response) {
-			console.log(response)
-		    alert(response.to);
-			if (response && response.to) {
-		   //if sucess do something
-		   //How many people did the user invited?
-			var showManyInvites = String(response.to).split(',').length;
-			alert(showManyInvites);
-			} else {
-			  alert('canceled');
-			  return false;
-			}
-		});
+		$("div#bet_container").before("<div id='loading_image'><img style='margin-left:330px;margin-top:20px;' src='/static/images/loading.gif' /></div>");
+		FB.api( {
+					method: 'fql.query',
+					query: 'select uid, name from user where is_app_user = 1 and uid in (SELECT uid2 FROM friend WHERE uid1 = me())'
+				  },
+				  function(response) {
+				    appFriends=response;
+					//alert(JSON.stringify(response));
+					//store fuids in array
+					var friends_arr = [];
+					for (obj in appFriends) {
+						//alert(appFriends[obj].uid);
+						friends_arr.push(appFriends[obj].uid);
+					}
+					//alert(friends_arr[0]);
+					FB.ui({
+						method: 'apprequests',
+						message: 'Become my Buddie in this cool betting application',
+						filters: ['app_non_users'],
+						title: 'Become my Buddie',
+						exclude_ids: friends_arr
+					},
+					function (response) {
+						console.log(response)
+						$('#loading_image').remove();
+					   // alert(response.to);
+						if (response && response.to) {
+					   //if sucess do something
+					   //How many people did the user invited?
+						var showManyInvites = String(response.to).split(',').length;
+						
+						alert(showManyInvites);
+						} else {
+						  alert('canceled');
+						  return false;
+						}
+					});
+					
+				  }
+		);		
+		
 	}
 	
-	function show_bet_page(event_id) {
-		FB.Canvas.setAutoResize();	
-		FB.Canvas.setSize({ height: 800 });
-		$("div#myModal").load('https://127.0.0.1:8001/placebets', function(response, status, xhr) {
-			  if (status == "error") {
-				var msg = "Sorry but there was an error: ";
-				alert(msg + xhr.status + " " + xhr.statusText);
-			  }
-			  $('#myModal').css('margin-top', (($('#myModal').outerHeight() / 2) * -1)-50).css('margin-left', ($('#myModal').outerWidth() / 2) * -1);
-			  $('#myModal').show();				  
-			  $('#myModal').modal();					  				  
-				  
-		});			
+	function show_bet_page(this, event_id) {
+		$.get("https://127.0.0.1:8001/getbets",{event_id:event_id}, function(data) {
+			  //TODO: Handle non-success cases
+			if(data.status == 1 ) {
+				$("div#myModal").append(data.html);
+				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
+			} else if (data.status == 2 || data.status == 3) {
+				showMessage('refresh');
+			}		      
+		  });
+			
 	}
 	
-	function appendBet(teamname, odds, betIdElement) {
-			var userCash = getUserCash();
-			alert(userCash);
-			//user cash is hard coded for now..Need to get it from cash div
-			var betcontent="<div id='bet_"+$(betIdElement).attr('id')+"' class='alert alert-success' style='padding-top:2px;font-size:11px;margin-bottom: 2px;'>\
-								<a class='close'  data-dismiss='alert'>x</a>\
-								  <div style='float:left;' id='team_name'><h5>"+ teamname+"</h5> </div>\
-								  <div style='margin-left:87px;' id='odds'> "+odds+"</div>\
-								  <div id='stakeLabel' style='margin-right:5px;float:left;'>Stake</div>\
-								  <div id='valContainer' style='float:left;'>	<input id='stake' name='stake' type='text' style='height:15px;width:40px;margin-top:-2px;'class='span1 stake'></div>\
-								  <div id='towinlabel' style='margin-left:5px;margin-right:2px;float:left;'> You Win  </div>\
-								  <div id='towin' style=''>23</div>\
-							  </div>";
+	function appendBet(betname, teamname, betIdElement) {
+			var odds=$(betIdElement).text();
+			//remove no bets placed intially
+			if ($("#no_bets").length > 0 ){
+				$("#no_bets").remove();
+			 }
+			//user cash is hard coded for now..Need to get it from cash div			
+			var betcontent="<div id='bet_"+$(betIdElement).attr('id')+"' class='alert alert-success' style='padding-bottom:0px;padding-right:0px;padding-top:2px;font-size:11px;margin-bottom: 2px;'>"
+			 +" <a class='close'  style='margin-right:25px;' data-dismiss='alert'>x</a>"
+			  +"<div class='row-fluid'>"
+				+"  <div class='span12' style='margin-top:-10px;'>"+betname+" : "+teamname+"</div>"					  		
+			 +"</div>"
+			 +"<div class='row-fluid' style='margin-top:10px;'>"
+				  +"<div class='span2'>"+odds +" x </div>"
+				  +"<div class='span3'><input id='stake_"+$(betIdElement).attr('id')+"' name='stake' type='text' style='height:15px;width:40px;margin-top:-2px;'></div>"
+				 +" <div class='span7' id='you_win_"+$(betIdElement).attr('id')+"'>You win 0</div>"					  		
+			 +"</div>"
+			+"</div>";			
 		  //check if bet already exists in betslip with betid
 		  if ($("#bet_"+$(betIdElement).attr('id')).length > 0 ){
 			  alert('This bet is already in betslip');
 		  } else {
-		      //remove placebet button if already exists
-			  //if ($("#placebet").length > 0 ){
-				  //$("#placebet").remove();
-			 // }
-			  $('#bet_slip_container').append(betcontent);
-			  $("#bet_"+$(betIdElement).attr('id')).bind('close', function () {
-				alert('hi');
-				stakeVal = $($($(this).children().get(4)).children().get(0)).val();
-				if(stakeVal > 0) {
-				    //alert(stakeVal);
-					//alert(userCash);
-					//userCash = userCash + stakeVal;
-					//$('#user_cash').text("Cash "+userCash);
-					//increaseCash(stakeVal, getUserCash());
+		     $('#bet_slip_container').append(betcontent);
+			 $("#bet_"+$(betIdElement).attr('id')).bind('close', function () {
+				//close handler for one bet list
+				if( $('#bet_slip_container').children().length == 2) {
+					//all bets removed
+					addNoBetsText("No Bets Placed");
 				}
+				
 			  });
-			  $(".stake").keyup(function() {
+			  $("#stake_"+$(betIdElement).attr('id')).keyup(function() {
 				//to allow only numericals in stake textbox
 				if (isNaN($(this).val())) {
-				   $(this).val(0);
-				   $($($(this).parent().next().next())).text(0);
+				   $(this).val("");
+				   $("#you_win_"+$(betIdElement).attr('id')).text("You win 0");
 				} else {
 				    var maxCharsAllowed = 5;
-					if($(this).val().length <= maxCharsAllowed) {
+					if($(this).val().length < maxCharsAllowed) {
 						//Valid user input
 						//check for user cash
-						//alert(userCash);
-						//alert($(this).val());
-						//alert(Number($(this).val()));
-						if(userCash >= Number($(this).val())) {
-							oddsVal = $($(this).parent().prev().prev()).text();
-							values= oddsVal.split('/');				
-							towin=($(this).val()*parseFloat(values[0]/values[1])).toFixed(2);
-							//alert(towin);
-							$($($(this).parent().next().next())).text(towin);
-							//userCash = userCash - Number($(this).val()) ;
-							//alert(Number($(this).val()));
-							//$('#user_cash').text("Cash "+userCash);
-							//userCash = getUserCash();
-						} else {
-							showMessage("Oh snap! You do not have enough cash! Please add cash", 'red');
-							$(this).val('');
-							//$('#user_cash').text("Cash "+userCash);
-						}
+						toWin=($(this).val()*parseFloat(odds)).toFixed(2);
+						$("#you_win_"+$(betIdElement).attr('id')).text("You win "+toWin);						
 					} else {
-						alert("Maximum Bet Limit Reached");
-						$(this).val($(this).val().substring(0, maxCharsAllowed));						
+						// If Maximum Bet Limit Reaches
+						$(this).val($(this).val().substring(0, maxCharsAllowed));
+						toWin=($(this).val()*parseFloat(odds)).toFixed(2);
+						$("#you_win_"+$(betIdElement).attr('id')).text("You win "+toWin);
 					}
 				}
 			  });			  
-		  }
-		  
-		  //placebet button implementation
-		  if ($("#placebet").length > 0 ){
-			 }
+		  }		  
 	}
 	
+	function placebet_click() {
+		alert("placebt click");
+	    var betArr = [];
+	    var bet_cash=0;
+	    if($('#bet_slip_container').children().length > 1) {
+			$('#bet_slip_container').children().each(function(index) {
+				//avoid betslip label
+				if(index!=0) {
+					var bet_id= $(this).attr('id').substring(4);
+					alert(bet_id);
+					if(!isNaN(parseInt(bet_id))) {
+					stakeVal = parseInt($('#stake_'+bet_id).val());
+					if(!isNaN(stakeVal)) {
+						bet_cash += stakeVal;
+						if(stakeVal != 0) {
+							betArr.push({'betId' : bet_id, 'stake' : stakeVal});
+						}
+					}
+				}
+			}
+			});
+	    }
+		//if bet array containts betlist values to post to server
+		if(betArr.length > 0) {			
+			alert(bet_cash);
+			if(bet_cash >= getUserCash()) {
+				showMessage("You don't have enough cash. Please buy cash", 'red');
+			} else {
+				//do ajax post toserver with fuid and betArr
+				emptyBetList();
+				
+				addNoBetsText("Bets successfully Placed");			
+				showMessage("Bets Placed successfully", 'blue');
+			}
+		} else {
+	    	showMessage("Please place bets", 'red');
+	    }
+	}
+	
+	function addNoBetsText(message) {
+		$('#bet_slip_container').append("<div id='no_bets'>"+message+" </div>");
+	}
+	
+	function emptyBetList() {
+		$('#bet_slip_container').children().each(function(index) {
+			//avoid betslip label
+			if(index!=0) {
+				var bet_id= $(this).attr('id').substring(4);
+				//alert(bet_id);
+				//alert($('#you_win_'+bet_id).text());
+				$(this).remove();				
+			}
+		});
+	}
 	
 	function getUserCash(){
-		return $('#user_cash').text().split(' ')[1];
+		return $('#user_cash').text().substring(1);
 	}
 	
 	function showMessage(message, color) {
 	    if(message.length > 0) {
-			if(color=='red') {
-				var alertHtml = "<div id='alertDiv' style='width:710px;margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
+	    	if(message == 'refresh') {
+	    		var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>Oops! There was an error. Please refresh this page.</strong></div>";
+	    	} else if(color=='red') {
+				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
 			} else {
-				var alertHtml = "<div id='alertDiv' style='width:710px;margin-bottom:0px;text-align:center;' class='alert alert-info'><a class='close'  data-dismiss='alert'>x</a>"+message+"</div>";
+				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-info'><a class='close'  data-dismiss='alert'>x</a>"+message+"</div>";
 			}
-			$("#bet_container").before(alertHtml);
+			$(".modal-body").before(alertHtml);
 			$("#alertDiv").bind('close', function () {
 				alert('hi');
 				//alert($($($(this).children().get(4)).children().get(0)).val());

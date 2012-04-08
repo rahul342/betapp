@@ -95,30 +95,24 @@
 	</script>
 	<!-- User Home starts from here-->
 	<div class="container main_box">
+		<div id="myModal" class="modal" style="display:none"></div>
 		<!--tabs code-->
 		<div class="row" >
 				<div class="span8">
 					<ul class="nav nav-pills"  >
 						<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
-						<li><a href="javascript:void(0);" onclick="ajax_post('invite')">Invite Friends</a></li>
-						<li><a class="btn btn-primary" href="#">Add Cash <i class="icon-plus icon-white"></i></a></li>
+						<li><a href="javascript:void(0);" onclick="invite_friends()">Invite Friends</a></li>
+						<li><a class="btn btn-primary" id="add_cash" href="#">Add Cash <i class="icon-plus icon-white"></i></a></li>
 						<li><a href="#">Help</a></li>
 					</ul>
 				</div>
 				<div class="pull-right">
-					<a id='user_cash' class="btn btn-success" href="#">More Cash in 05:00  <i class="icon-time icon-white"></i></a>
+					<a id='user_cash_time' class="btn btn-success" href="#">More Cash in 05:00  <i class="icon-time icon-white"></i></a>
 					<a id='user_cash' class="btn btn-success" href="#">$200</a>
 				</div>
 		 </div>
 		 <div id="bet_container" class="bet_container">
-		 	<img style='margin-left:330px;margin-top:20px;' src='/static/images/loading.gif' />
-		 </div>
-		 <div id="myModal" class="modal span10" style="border:5px solid #666666;"></div>
-		<script type="text/javascript">
-			//for home page
-			$('#myModal').hide();
-			//ajax_post('home');		
-		</script>
+		 </div>		 
 	</div>
   </body>
 </html>

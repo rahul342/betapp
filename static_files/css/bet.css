@@ -20,3 +20,24 @@ div.my-widget th {
 	text-align: center;
 }
 
+#myModal {
+	border:5px solid #666666;
+}
+
+#add_cash:hover {
+	background:#006DCC;
+}
+
+.bet_slip_container {
+	border-radius: 5px;
+	border: 2px solid #CCCCCC;
+	background-color: #CCCCCC;
+	height:250px;
+	overflow:auto;
+}
+
+.bet_slip_label {
+	text-align:center;
+	margin-bottom:10px;
+	font-weight:bold;
+}
