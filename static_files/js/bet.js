@@ -45,17 +45,17 @@
 		
 	}
 	
-	function show_bet_page(this, event_id) {
-		$.get("https://127.0.0.1:8001/getbets",{event_id:event_id}, function(data) {
+	function show_bet_page(parent, event_id) {
+		$.post("https://127.0.0.1:8001/getbets/",{event_id:event_id}, function(data) {
 			  //TODO: Handle non-success cases
-			if(data.status == 1 ) {
+			if(data.result == "ok" ) {
 				$("div#myModal").append(data.html);
-				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
-			} else if (data.status == 2 || data.status == 3) {
-				showMessage('refresh');
-			}		      
-		  });
-			
+				$('#myModal').css({width: '800px','margin-left': function () { return -($(this).width() / 2); }, top:'35%'});
+				$('#myModal').modal();
+			} else if (data.result == "error") {
+				showMessage('refresh', 'red', false );
+			}	      
+		  });			
 	}
 	
 	function appendBet(betname, teamname, betIdElement) {
@@ -138,16 +138,15 @@
 		if(betArr.length > 0) {			
 			alert(bet_cash);
 			if(bet_cash >= getUserCash()) {
-				showMessage("You don't have enough cash. Please buy cash", 'red');
+				showMessage("less_cash", 'red', true);
 			} else {
 				//do ajax post toserver with fuid and betArr
-				emptyBetList();
-				
+				emptyBetList();				
 				addNoBetsText("Bets successfully Placed");			
-				showMessage("Bets Placed successfully", 'blue');
+				showMessage("bet_success", 'blue', true);
 			}
 		} else {
-	    	showMessage("Please place bets", 'red');
+	    	showMessage("no_bets", 'red', true);
 	    }
 	}
 	
@@ -171,19 +170,31 @@
 		return $('#user_cash').text().substring(1);
 	}
 	
-	function showMessage(message, color) {
+	function showMessage(message, color, onModal) {
 	    if(message.length > 0) {
 	    	if(message == 'refresh') {
-	    		var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>Oops! There was an error. Please refresh this page.</strong></div>";
-	    	} else if(color=='red') {
-				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
+	    		msgText = "Oops! There was an error. Please refresh this page.";
+	    		//var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>Oops! There was an error. Please refresh this page.</strong></div>";
+	    	} else if (message == 'no_bets') {
+	    		msgText = "Please place bets";
+	    	} else  if(message == 'less_cash' ) {
+	    		msgText = "Oh snap! You don't have enough cash to place bets. Please buy cash";
+	    	} else if(mesaage == "bet_success") {
+	    		msgText = "your bets are successfully placed."
+	    	}
+	    	if(color=='red') {
+				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+msgText+"</strong></div>";
 			} else {
-				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-info'><a class='close'  data-dismiss='alert'>x</a>"+message+"</div>";
+				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-info'><a class='close'  data-dismiss='alert'>x</a>"+msgText+"</div>";
 			}
-			$(".modal-body").before(alertHtml);
+	    	if(onModal) {
+	    		$(".modal-body").before(alertHtml);
+	    	}
+	    	else {
+	    		$("#bet_container").before(alertHtml);
+	    	}
 			$("#alertDiv").bind('close', function () {
-				alert('hi');
-				//alert($($($(this).children().get(4)).children().get(0)).val());
+				//for something if alert is closed
 			});
 			//close alert after 10 seconds
 			window.setTimeout(hideMessage, 10000);
