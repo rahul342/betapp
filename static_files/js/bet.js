@@ -16,10 +16,11 @@
 					}
 					FB.ui({
 						method: 'apprequests',
-						message: 'Become my Buddie in this cool betting application',
+						message: 'Become my buddie in this cool betting application',
 						filters: ['app_non_users'],
 						title: 'Become my Buddie',
-						exclude_ids: friends_arr
+						exclude_ids: friends_arr,
+						data:{ 'invite' : 1 }
 					},
 					function (response) {
 						console.log(response)
@@ -31,11 +32,9 @@
 						} else {
 						  return false;
 						}
-					});
-					
+					});					
 				  }
 		);		
-		
 	}
 	
 	function show_bet_page(parent, event_id) {
@@ -129,7 +128,7 @@
 	    }
 		//if bet array containts betlist values to post to server
 		if(betArr.length > 0) {			
-			if(bet_cash >= getUserCash()) {
+			if(bet_cash > getUserCash()) {
 				showMessage("less_cash", 'red', true);
 			} else {
 				//do ajax post toserver with fuid and betArr
@@ -228,4 +227,31 @@
 	
 	function showMatch() {
 			$('div#match_winner').show();
+	}
+	
+	function add_cash() {
+		$("div#bet_container").html("");
+		$("div#bet_container").load('https://127.0.0.1:8001/addcash/', function(response, status, xhr) {
+		  if (status == "error") {
+			var msg = "Sorry but there was an error: ";
+			console.log(msg + xhr.status + " " + xhr.statusText);
+		  }			  
+		});
+		$("li").removeClass("active");	
+		$("#add_cash").addClass("active");
+	}
+	
+	function ajax_post(type) {
+		if(type == 'home') {
+			//FB.Canvas.setAutoResize();
+			$("div#bet_container").html("");
+			$("div#bet_container").load('https://127.0.0.1:8001/home/', function(response, status, xhr) {
+			  if (status == "error") {
+				var msg = "Sorry but there was an error: ";
+				console.log(msg + xhr.status + " " + xhr.statusText);
+			  }
+			});
+			$("li").removeClass("active");	
+			$("#home").addClass("active");
+		} 
 	}

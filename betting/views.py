@@ -19,12 +19,18 @@ def start(request):
         app_id = settings.FACEBOOK_APP_ID_MAIN
         app_uri = 'https://apps.facebook.com/cricbets/'
         server_url = settings.SERVER_URL_MAIN
+        app_access_token = settings.FACEBOOK_APP_ACCESS_TOKEN_MAIN
     else:
         app_id = settings.FACEBOOK_APP_ID_LOCAL
         app_uri = 'https://apps.facebook.com/cricbetslocal/'
         server_url = settings.SERVER_URL_LOCAL
-
-    return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, server_url=server_url))
+        app_access_token = settings.FACEBOOK_APP_ACCESS_TOKEN_LOCAL
+    request_ids = request.GET.get('request_ids', None)
+    if request_ids:
+        app_uri += "?request_ids="+request.GET['request_ids']
+        request_ids = request_ids.split(',')[-1]    
+    logger.info(app_id)
+    return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, app_access_token=app_access_token, server_url=server_url, request_ids = request_ids))
 
 def home(request):
     logger.debug("In home(), POST = ", request.POST)
@@ -33,8 +39,7 @@ def home(request):
     request.session['user_id'] = user.id
     request.session['fb_id'] = user.fb_id
     request.session.set_expiry(int(request.POST['expiry']))
-    request.session['timezone'] = float(request.POST['timezone'])
-    
+    request.session['timezone'] = float(request.POST['timezone'])    
     
     if created:
         user.name = request.POST['name']
@@ -124,6 +129,9 @@ def place_bets(request):
         user.cash = user.cash - stake
         user.save()
     return "success"
+
+def add_cash(request):
+    return render_to_response('add_cash.html')
 
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])
