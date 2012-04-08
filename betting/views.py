@@ -4,7 +4,7 @@ from datetime import datetime
 from django.shortcuts import render_to_response
 from djangoappengine.utils import on_production_server
 import bet_data_fetcher.views as bet_data_views
-import errors
+import status
 import logging
 import settings
 import time
@@ -30,8 +30,13 @@ def start(request):
 
 def home(request):
     logger.debug("In home(), POST = ", request.POST)
-    user, created = User.objects.get_or_create(fb_id = request.POST['uid'] )
+    user, created = User.objects.get_or_create(fb_id = request.POST['uid'])
+    request.session.flush()
     request.session['user'] = user
+    request.session.set_expiry(int(request.POST['expiry']))
+    request.session['timezone'] = float(request.POST['timezone'])
+    
+    
     if created:
         user.name = request.POST['name']
         user.username = request.POST['user_name']
@@ -85,14 +90,14 @@ def get_bets(request):
             #TODO: return rendered HTML
             return match_bets
         else:
-            return errors.MATCH_ID_NOT_FOUND
+            return status.MATCH_ID_NOT_FOUND
     else:
-        return errors.MISSING_PARAMTER
+        return status.MISSING_PARAMTER
     
 def place_bets(request):
     user = request.session.get('user')
     if not user:
-        return errors.USER_NOT_FOUND
+        return status.USER_NOT_FOUND
     #bets = request.POST.getattr()
     #for bet in bets:
         #verify if bet is active
