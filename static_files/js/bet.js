@@ -1,38 +1,61 @@
 /* All Javascript functions of betting app will go into this file */	
 	function invite_friends() {
-		FB.Canvas.setAutoResize();
+		//FB.Canvas.setAutoResize();
 		//specify redirect uri to handle requests
-		FB.ui({
-			method: 'apprequests',
-			message: 'Become my Buddie',
-			filters: ['app_non_users'],
-			title: 'Become my Buddie'
-		},
-		function (response) {
-			console.log(response)
-		    alert(response.to);
-			if (response && response.to) {
-		   //if sucess do something
-		   //How many people did the user invited?
-			var showManyInvites = String(response.to).split(',').length;
-			alert(showManyInvites);
-			} else {
-			  alert('canceled');
-			  return false;
-			}
-		});
+		$("div#bet_container").before("<div id='loading_image'><img style='margin-left:330px;margin-top:20px;' src='/static/images/loading.gif' /></div>");
+		FB.api( {
+					method: 'fql.query',
+					query: 'select uid, name from user where is_app_user = 1 and uid in (SELECT uid2 FROM friend WHERE uid1 = me())'
+				  },
+				  function(response) {
+				    appFriends=response;
+					//alert(JSON.stringify(response));
+					//store fuids in array
+					var friends_arr = [];
+					for (obj in appFriends) {
+						//alert(appFriends[obj].uid);
+						friends_arr.push(appFriends[obj].uid);
+					}
+					//alert(friends_arr[0]);
+					FB.ui({
+						method: 'apprequests',
+						message: 'Become my Buddie in this cool betting application',
+						filters: ['app_non_users'],
+						title: 'Become my Buddie',
+						exclude_ids: friends_arr
+					},
+					function (response) {
+						console.log(response)
+						$('#loading_image').remove();
+					   // alert(response.to);
+						if (response && response.to) {
+					   //if sucess do something
+					   //How many people did the user invited?
+						var showManyInvites = String(response.to).split(',').length;
+						
+						alert(showManyInvites);
+						} else {
+						  alert('canceled');
+						  return false;
+						}
+					});
+					
+				  }
+		);		
+		
 	}
 	
-	function show_bet_page(event_id) {
-		$("div#myModal").load('https://127.0.0.1:8001/placebets/', function(response, status, xhr) {
-			  if (status == "error") {
-				var msg = "Sorry but there was an error: ";
-				alert(msg + xhr.status + " " + xhr.statusText);
-			  }
-			  $('#myModal').css({width: '800px','margin-left': function () { return -($(this).width() / 2); }, top:'35%'});
-			  $('#myModal').modal();					  				  
-				  
-		});			
+	function show_bet_page(this, event_id) {
+		$.get("https://127.0.0.1:8001/getbets",{event_id:event_id}, function(data) {
+			  //TODO: Handle non-success cases
+			if(data.status == 1 ) {
+				$("div#myModal").append(data.html);
+				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
+			} else if (data.status == 2 || data.status == 3) {
+				showMessage('refresh');
+			}		      
+		  });
+			
 	}
 	
 	function appendBet(betname, teamname, betIdElement) {
@@ -119,6 +142,7 @@
 			} else {
 				//do ajax post toserver with fuid and betArr
 				emptyBetList();
+				
 				addNoBetsText("Bets successfully Placed");			
 				showMessage("Bets Placed successfully", 'blue');
 			}
@@ -149,7 +173,9 @@
 	
 	function showMessage(message, color) {
 	    if(message.length > 0) {
-			if(color=='red') {
+	    	if(message == 'refresh') {
+	    		var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>Oops! There was an error. Please refresh this page.</strong></div>";
+	    	} else if(color=='red') {
 				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-error'><a class='close'  data-dismiss='alert'>x</a><strong>"+message+"</strong></div>";
 			} else {
 				var alertHtml = "<div id='alertDiv' style='margin-bottom:0px;text-align:center;' class='alert alert-info'><a class='close'  data-dismiss='alert'>x</a>"+message+"</div>";

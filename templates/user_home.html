@@ -71,7 +71,7 @@
 					<td>
 					  <div class="row-fluid">
 					  <div class="span9">{{match.match_name}} <br> {{match.date}}</div>
-					  <div class="span3 place-bet-btn"><a class="btn btn-info" href="javascript:void(0)" onclick="show_bet_page(this)">Place Bets</a></div>
+					  <div class="span3 place-bet-btn"><a class="btn btn-info" href="javascript:void(0)" onclick="show_bet_page(this, {{ match.id }})">Place Bets</a></div>
 					  </div>
 					</td>
 				</tr>
@@ -83,5 +83,21 @@
 			  </tbody>
 			</table>
 		</div></div>
+		
+		<div class="row-fluid"><div class="span12 my-widget">
+			<table id="recent_bets" class='table table-condensed table-bordered'>
+			 <tbody>
+			  <tr>
+					<td>
+					  <div class="row-fluid">
+					  <div class="span9"><h4>Tournament Bets</h4></div>
+					  <div class="span3 place-bet-btn"><a class="btn btn-info" href="javascript:void(0)" onclick="show_bet_page(this, -1)">Place Bets</a></div>
+					  </div>
+					</td>
+				</tr>			  
+			  </tbody>
+			</table>
+		</div></div>
+		
 	</div>	
 </div>
