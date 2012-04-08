@@ -1,6 +1,6 @@
 # Create your views here.
 from betting.models import *
-from datetime import datetime
+from datetime import datetime, timedelta
 from decorators import jsonify
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
@@ -35,7 +35,6 @@ def home(request):
     request.session.set_expiry(int(request.POST['expiry']))
     request.session['timezone'] = float(request.POST['timezone'])
     
-    
     if created:
         user.name = request.POST['name']
         user.username = request.POST['user_name']
@@ -47,7 +46,6 @@ def home(request):
         user.has_deactivated = False
         user.save()
     
-    
     bet_data = bet_data_views.get_all_bet_data()
     if not created:
         user_bets = [i.get_ui_dict() for i in PlacedBets.objects.filter(user=user).select_related().order_by('-add_time')]
@@ -55,9 +53,10 @@ def home(request):
         user_bets = []
     home_bet_data = _home_bet_data(bet_data)
     logger.debug(home_bet_data)
-    #return HttpResponse("hello")
-    #TODO: return rendered HTML
-    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=user_bets, user=user))
+    get_cash_time = int(time.mktime((user.cash_update_time + timedelta(hours=bet_settings.CASH_UPDATE_TIME)).timetuple()))
+    
+    return render_to_response('user_home.html', dict(home_bet_data = home_bet_data, user_bets=user_bets, user=user, 
+                                                     get_cash_time=get_cash_time, constants=bet_settings))
 
 
 def get_leader_board(request):
@@ -124,6 +123,20 @@ def place_bets(request):
         user.cash = user.cash - stake
         user.save()
     return "success"
+
+@jsonify
+def add_free_cash(request):
+    user = User.objects.get(id=request.session.get('user_id'))
+    if not user:
+        raise errors.USER_NOT_FOUND
+    user_hours_td = datetime.now() - user.cash_update_time
+    user_hours = user_hours_td.days * 24 + user_hours_td.seconds/3600 
+    if user_hours >= bet_settings.CASH_UPDATE_TIME:
+        user.cash = user.cash + bet_settings.FREE_TIMED_CASH
+        user.rank_cash = user.rank_cash + bet_settings.FREE_TIMED_CASH
+        user.cash_update_time = datetime.now()
+        user.save()
+    return str(int(time.mktime((user.cash_update_time + timedelta(hours=bet_settings.CASH_UPDATE_TIME)).timetuple())))
 
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])

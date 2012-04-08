@@ -96,5 +96,45 @@
 		
 	</div>	
 </div>
-<script>setUserCash({{ user.cash }})</script>
+<script>
+	setUserCash({{ user.cash }});
+	var countdown_id = null;
+	var final_seconds = {{get_cash_time}};
+	function updateTimer() {
+		var now = parseInt((new Date()).getTime()/1000, 10);	
+		totalSec = final_seconds - now;
+		console.log(final_seconds+":"+now+":"+totalSec);
+		if(totalSec <= 0) {
+			if(countdown_id != null) {
+				clearInterval(countdown_id);
+				countdown_id = null;
+			}
+			$("#user_cash_time").text("Get Cash");
+			$("#user_cash_time").on("click", function(event) {
+				$(this).addClass("disabled");
+				$(this).text("Requesting..");
+				$.post("/addfreecash/", function(response) {
+					if(response.result == "error") {
+						$("#user_cash_time").text("Error");
+					} else {
+						increaseCash({{constants.FREE_TIMED_CASH}});
+						final_seconds = parseInt(response.html, 10);
+						$("#user_cash_time").off("click");
+						$("#user_cash_time").removeClass("disabled");
+						countdown_id = setInterval("updateTimer()", 1000);
+					}
+				});
+			});
+			return;
+		}
+		
+		hours = parseInt( totalSec / 3600 ) % 24;
+		minutes = parseInt( totalSec / 60 ) % 60;
+		seconds = totalSec % 60;
+
+		var countdown_text = "More cash in " + (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
+		$("#user_cash_time").text(countdown_text);
+	}
+	countdown_id = setInterval("updateTimer()", 1000);
+</script>
 {% endlocalize %}
