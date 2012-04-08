@@ -17,14 +17,20 @@ logger.setLevel(logging.DEBUG)
 def start(request):
     if on_production_server:
         app_id = settings.FACEBOOK_APP_ID_MAIN
-        app_uri = 'https://apps.facebook.com/cricbets/'
+        app_uri = 'https://apps.facebook.com/bettingleague/'
         server_url = settings.SERVER_URL_MAIN
+        app_access_token = settings.FACEBOOK_APP_ACCESS_TOKEN_MAIN
     else:
         app_id = settings.FACEBOOK_APP_ID_LOCAL
         app_uri = 'https://apps.facebook.com/cricbetslocal/'
         server_url = settings.SERVER_URL_LOCAL
-
-    return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, server_url=server_url))
+        app_access_token = settings.FACEBOOK_APP_ACCESS_TOKEN_LOCAL
+    request_ids = request.GET.get('request_ids', None)
+    if request_ids:
+        app_uri += "?request_ids="+request.GET['request_ids']
+        request_ids = request_ids.split(',')[-1]    
+    logger.info(app_id)
+    return render_to_response('start.html', dict(app_id = app_id, app_uri=app_uri, app_access_token=app_access_token, server_url=server_url, request_ids = request_ids))
 
 def home(request):
     logger.debug("In home(), POST = ", request.POST)
@@ -125,7 +131,7 @@ def place_bets(request):
     return "success"
 
 @jsonify
-def add_free_cash(request):
+def update_free_cash(request):
     user = User.objects.get(id=request.session.get('user_id'))
     if not user:
         raise errors.USER_NOT_FOUND
@@ -137,6 +143,9 @@ def add_free_cash(request):
         user.cash_update_time = datetime.now()
         user.save()
     return str(int(time.mktime((user.cash_update_time + timedelta(hours=bet_settings.CASH_UPDATE_TIME)).timetuple())))
+
+def add_cash(request):
+    return render_to_response('add_cash.html')
 
 def _home_bet_data(data):
     return_dict = dict(live=[], upcoming=[])

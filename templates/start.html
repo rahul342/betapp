@@ -56,16 +56,36 @@
 			expiry=response.authResponse.expiresIn;
 			//get friends who are using application
 			var appFriends;
-			FB.api('/me', {"fields": ["name", "username", "timezone"], "access_token": access_token}, function(response) {
-				  name = response.name;
-				  username = response.username;
-				  var data = {uid: uid, name: name, user_name: username, expiry: expiry, timezone: response.timezone};
-				  $.post(post_url, data, function(data) {
-						      $("div#bet_container").html("");
-							  $("div#bet_container").html(data);
-						  });		  
-				  				  
-			 });
+
+			{% if  request_ids  %}
+				//get from userid. check if already money has been incremented other wise increase money
+				
+				FB.api( "/{{ request_ids }}?access_token={{ app_access_token }}", function(response) {
+					sender_id = response['from']['id'];					
+					FB.api('/me', {"fields": ["name", "username", "timezone"], "access_token": access_token}, function(response) {
+					  name = response.name;
+					  username = response.username;
+					  var data = {uid: uid, name: name, user_name: username, expiry: expiry, timezone: response.timezone, sender_id:sender_id};
+					  $.post(post_url, data, function(data) {
+							      $("div#bet_container").html("");
+								  $("div#bet_container").html(data);
+							  });					  				  
+				 });							  				  
+				});				
+				
+			{% else %}
+				FB.api('/me', {"fields": ["name", "username", "timezone"], "access_token": access_token}, function(response) {
+					  name = response.name;
+					  username = response.username;		
+					  var data = {uid: uid, name: name, user_name: username, expiry: expiry, timezone: response.timezone};
+					  console.log(data);
+					  $.post(post_url, data, function(data) {
+							      $("div#bet_container").html("");
+								  $("div#bet_container").html(data);
+							  });		  
+					  				  
+				 });
+			{% endif %}
 		}
 		
 		function load_friends_leaderboard() {
@@ -77,7 +97,6 @@
 					  function(response) {
 					    appFriends=JSON.stringify(response);
 						var data = {uid: uid, name: name, user_name: username, appFriends:appFriends};
-						//alert(JSON.stringify(response));						
 						//TODO: Call leaderboard view
 					  }
 					);
@@ -102,7 +121,7 @@
 					<ul class="nav nav-pills"  >
 						<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
 						<li><a href="javascript:void(0);" onclick="invite_friends()">Invite Friends</a></li>
-						<li><a class="btn btn-primary" id="add_cash" href="#">Add Cash <i class="icon-plus icon-white"></i></a></li>
+						<li><a class="btn btn-primary" id="add_cash" href="javascript:void(0);"  onclick="add_cash()">Add Cash <i class="icon-plus icon-white"></i></a></li>
 						<li><a href="#">Help</a></li>
 					</ul>
 				</div>

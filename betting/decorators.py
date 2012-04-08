@@ -16,6 +16,7 @@ def jsonify(func):
                 response = dict(html = response, result = 'ok')
             else:
                 response = dict(result='error', message='error in view')
+
         except KeyboardInterrupt:
             raise
         except Exception, e:

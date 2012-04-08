@@ -113,7 +113,7 @@
 			$("#user_cash_time").on("click", function(event) {
 				$(this).addClass("disabled");
 				$(this).text("Requesting..");
-				$.post("/addfreecash/", function(response) {
+				$.post("/updatefreecash/", function(response) {
 					if(response.result == "error") {
 						$("#user_cash_time").text("Error");
 					} else {
