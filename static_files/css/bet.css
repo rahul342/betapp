@@ -42,3 +42,35 @@ div.my-widget th {
 	margin-bottom:10px;
 	font-weight:bold;
 }
+
+.github-label {
+	display: inline-block;
+	font-size: 11px;
+	padding: 0 6px;
+	font-weight: bold;
+	line-height: 20px;
+	margin-top: 10px;
+	color: #ffffff;
+	white-space: nowrap;
+	
+	background: #F1F1F1;
+	
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.2);
+}
+
+
+.github-label.darkgreen {
+	background: #00A50C;
+	background: -webkit-linear-gradient(top, #00A50C, #076A00);
+	background: -moz-linear-gradient(top, #00A50C, #076A00);
+	background: -ms-linear-gradient(top, #00A50C, #076A00);
+	background: -o-linear-gradient(top, #00A50C, #076A00);
+	background: linear-gradient(top, #00A50C, #076A00);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#00a50c', endColorstr='#076a00');
+}
+
+
