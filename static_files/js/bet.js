@@ -241,17 +241,6 @@
 		$("#add_cash").addClass("active");
 	}
 	
-	function ajax_post(type) {
-		if(type == 'home') {
-			//FB.Canvas.setAutoResize();
-			$("div#bet_container").html("");
-			$("div#bet_container").load('https://127.0.0.1:8001/home/', function(response, status, xhr) {
-			  if (status == "error") {
-				var msg = "Sorry but there was an error: ";
-				console.log(msg + xhr.status + " " + xhr.statusText);
-			  }
-			});
-			$("li").removeClass("active");	
-			$("#home").addClass("active");
-		} 
+	function refresh_home(url) {
+			top.location = encodeURI(url);		
 	}

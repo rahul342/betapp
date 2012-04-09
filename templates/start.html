@@ -39,11 +39,7 @@
 		var uid, access_token;
 		FB.getLoginStatus(function(response) {
 			if (response.status === 'connected') {	
-				loggedIn(response);
-				//$.post("https://127.0.0.1:8001/home/",{uid:'719742062', name:'Rahul Agrawal', username:'rahul342'}, function(data) {
-				//		      $("div#bet_container").html("");
-				//			  $("div#bet_container").html(data);
-				//		  });
+				loggedIn(response);				
 		  } else {
 				top.location = encodeURI("https://www.facebook.com/dialog/oauth?client_id={{app_id}}&redirect_uri={{app_uri}}&response_type=token");
 		  }
@@ -119,7 +115,7 @@
 		<div class="row" >
 				<div class="span8">
 					<ul class="nav nav-pills"  >
-						<li id="home" class="active"><a href="javascript:void(0);" onclick="ajax_post('home')">Home</a></li>
+						<li id="home" class="active"><a href="javascript:void(0);" onclick="refresh_home('{{ app_uri }}')">Home</a></li>
 						<li><a href="javascript:void(0);" onclick="invite_friends()">Invite Friends</a></li>
 						<li><a class="btn btn-primary" id="add_cash" href="javascript:void(0);"  onclick="add_cash()">Add Cash <i class="icon-plus icon-white"></i></a></li>
 						<li><a href="#">Help</a></li>
